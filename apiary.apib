@@ -1,0 +1,3829 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Introduction
+This is document for RAS's REST API. All responses from and to the API will be in JSON format.
+
+#General Request Response
+Almost APIs requires a request with application/json content type (except API for upload file, image).
+
+#Authentication
+Ras API use JWT to authenticate user. Exactly we used JWT Bearer Authentication.
+Almost APIs requires authentication on header with Authorization tag and value formatted:
+
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRw319.sSaOosOuPWvTYVL
+
+#Error
+We must catch common errors in all API to ensure our application works properly.
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot create new user!"
+        }
+
+|         HTTP CODE         |       Error code        |  Error message               |
+|---------------------------|-------------------------|------------------------------|
+|           401             |     unauthorized        |    Authen fail               |
+
+
+## Group Registration
+API request for registration process, include signup by email and social plugins.
+### SubmitSignUp [POST /reg/signup]
+API request for sign up by username, email and password. privacy and services term must be agreed before sending.
+| Attribute                   | Description                           |
+|-----------------------------|---------------------------------------|
+|     `userName`              |The nick name of the user              |
+|     `email`                 |The email of the user                  |
+|     `userPhone`             |The userPhone of the user              |
+|     `password`              |The password of the user               |
+|     `privacyTermAgree`      |Status of privacy agreement            |
+|     `servicesTermAgree`     |Status of term of services agreement   |
+|     `receiveInfor`          |User want to receive addtional info?   |
+|     `platformType`          |Default for normal sign up is RAS      |
+
+* Status `200` - Return all data about user information and a token with time to live.
+* Status `400` - The registration email or username already exist.
+* Status `403` - Password and re-enter password does not match, or services and privacy agreement not tick yet.
+
++ Request (application/json)
+        
+        {
+            "country":"KR",
+            "region":"KR-SE",
+            "userName":"LongNavy",
+            "email":"longcodon@gmail.com",
+            "password":"long123321",
+            "servicesTermAgree":true,
+            "privacyTermAgree":true,
+            "receiveInfor":false,
+            "platformType":"RAS",
+            "os":"ANDROID"
+        }
+
++ Response 200 (application/json)
+
+        {
+          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
+           "userSeq":"46",
+           "userId":"URK7865529",
+           "userStatus":"WAIT",
+           "platformType":"RAS",
+           "userEmail":"duclongbuivn@gmail.com",
+           "userName":"Vegeta",
+           "userPhone":"",
+           "country":"KR",
+           "regionGroup":"전북",
+           "regionName":"장수군",
+           "userFavorite":[
+              1,
+              2,
+              6,
+              12
+           ],
+           "userClip":"0",
+           "profileIntroduction":"Abc",
+           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+           "hashtags":[
+              "tag1",
+              "tag2"
+           ],
+           "dateLastAccess":"2019-10-22 02:23:05",
+           "dateCreated":"2019-10-22 02:23:05"
+        }
+
+        
++ Response 400 (application/json)
+
+        {
+            "code":"EMAIL_EXISTED",
+            "message":"The email already exist!",
+        }
+        
+        {
+            "code":"term_error",
+            "message":"You must agree term and policy agreement!",
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### SubmitSocialSignUp [POST /reg/signup/{signType}]
+API request for sign up by social network
+| Attribute                   | Description                                   |
+|-----------------------------|-----------------------------------------------|
+|     `accessToken`           |The token callback from Google or Facebook API |
+
+* Status `200` - Return all data of user and a token with time to live.
+* Status `401` - The token is invalid
+
++ Request (application/json)
+
+        {
+            "accessToken":"QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
+        }
+
++ Response 200 (application/json)
+
+  
+        {
+          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
+           "userSeq":"46",
+           "userId":"URK7865529",
+           "userStatus":"WAIT",
+           "platformType":"RAS",
+           "userEmail":"duclongbuivn@gmail.com",
+           "userName":"Vegeta",
+           "userPhone":"",
+           "country":"KR",
+           "regionGroup":"전북",
+           "regionName":"장수군",
+           "userFavorite":[
+              1,
+              2,
+              6,
+              12
+           ],
+           "userClip":"0",
+           "profileIntroduction":"Abc",
+           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+           "hashtags":[
+              "tag1",
+              "tag2"
+           ],
+           "dateLastAccess":"2019-10-22 02:23:05",
+           "dateCreated":"2019-10-22 02:23:05"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message": "Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### SubmitSelectRegion [POST /reg/signup/update-region]
+API request for submit region, privacy and term of service agreement after uses social login
+| Attribute           | Description                                  |
+|---------------------|----------------------------------------------|
+| `country`           | The country of the user                  |
+| `region`            | The current region in the nation of the user |
+| `servicesTermAgree` | Status of privacy agreement                  |
+| `privacyTermAgree`  | Status of term of services agreement         |
+| `receiveInfor`      | User want to receive addtional info?         |
+
+* Status `200` - The social registration complete 
+* Status `401` - The authentication is required
+
++ Request (application/json)
+        
+        {
+            "country":"KR",
+            "region":"Sungnam",
+            "servicesTermAgree":"true",
+            "privacyTermAgree":"true",
+            "receiveInfor":"false",
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "message":"Data update completed!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message": "Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+## Group Authentication
+API request for authentication process, include login with email, password and social login.
+### SubmitLogin [POST /auth/login]
+API request for normal login, using username and email
+| Attribute           | Description                               |
+|---------------------|-------------------------------------------|
+| `email`             | The email which user registered           |
+| `password`          | The password registering with email above |
+
+* Status `200` - The login success, return all user data with token and a time to live
+* Status `400` - Wrong email or password
+* Status `404` - Email does not exist
+
++ Request (application/json)
+        
+        {
+            "email": "admin@mintpot.com",
+            "password"": "123123"
+        }
+    
++ Response 200 (application/json)
+
+        {
+          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
+           "userSeq":"46",
+           "userId":"URK7865529",
+           "userStatus":"WAIT",
+           "platformType":"RAS",
+           "userEmail":"duclongbuivn@gmail.com",
+           "userName":"Vegeta",
+           "userPhone":"",
+           "country":"KR",
+           "regionGroup":"전북",
+           "regionName":"장수군",
+           "userFavorite":[
+              1,
+              2,
+              6,
+              12
+           ],
+           "userClip":"0",
+           "profileIntroduction":"Abc",
+           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+           "hashtags":[
+              "tag1",
+              "tag2"
+           ],
+           "dateLastAccess":"2019-10-22 02:23:05",
+           "dateCreated":"2019-10-22 02:23:05"
+        }
+
++ Response 400 (application/json)
+        
+        {  
+            "code":"WRONG_EMAIL_PASSWORD",
+            "message":"Wrong email or password!"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "code":"EMAIL_NOT_EXIST",
+            "message":"The email does not exist!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### ChangePassword [POST /auth/change-password]
+API request for changing password.
+| Attribute              | Description                          |
+|------------------------|--------------------------------------|
+| `oldPassword`          | Current user password                |
+| `newPassword`          | The new password                     |
+| `confirmationPassword` | Re-type new password                 |
+
+* Status `200` - Password is changed
+* Status `400` - Current password is invalid
+* Status `401` - Authentication is required!
+* Status `403` - New password and confirm password does not match
+
++ Request (application/json)
+        
+        {
+            "oldPassword":"123321",
+            "newPassword":"jason123321",
+            "confirmPassword":"jason123321",
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"PASSWORD_UPDATED",
+            "message":"Password updated!",
+        }
+
++ Response 400 (application/json)
+        
+        {
+            "code":"PASSWORD_INVALID",
+            "message":"Current password is invalid!",
+        }
+        
++ Response 400 (application/json)
+        
+        {
+            "code":"PASSWORD_NOT_MATCH",
+            "message":"New password and confirm password does not match!",
+        }        
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message": "Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### SubmitResetPassword [POST /auth/reset-password]
+API request to get recovery password when user forgot it
+| Attribute              | Description                                 |
+|------------------------|---------------------------------------------|
+| `email`                | The email used to register with the account |
+
+
+* Status `200` - Temporary Password will be sent to the email
+* Status `404` - The email null or not exist
+* Status `500` - Exception error
+
++ Request (application/json)
+        
+        {
+            "email":"admin@mintpot.net",
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"PASSWORD_WILL_SENT"
+            "message":"Temporary Password will be sent to the email!"
+        }
+        
++ Response 404 (application/json)
+        
+        {
+            "code":"NOT_FOUND_ERROR",
+            "message":"The email does not exist!"
+        }
+        
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"error message"
+        }        
+
+## Group Task Management
+API request for wish and todo management, include get list todo/wish and handle wish/todo task
+### GetTodoList [GET /task/get/todos?pageNumber={?pageNumber,keyWord}]
+API request to get all current login user's todo item in todo management
+
+* Status `200` - Return list data item in `page` index.
+* Status `204` - These is no todo list available
+* Status `401` - The authentication is required
+
++ Parameters
+    + pageNumber - A variable that is required
+    + keyWord (optional) - A query variable
+ 
++ Response 200 (application/json)
+        
+        [
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            },
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            },
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            }
+          ]
+       
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!",
+        }
+
+### GetTodoItemDetail [GET /task/get/todoDetail{?orderNo}]
+API request to get a todo item in detail inside task management
+
+* Status `200` - Return details of the `orderNo` item.
+* Status `401` - The authentication is required
+
++ Parameters
+    + orderNo - A variable that is required
+
++ Response 200 (application/json)
+
+        {
+            "orderNo": 132,
+            "title": "132ddd",
+            "status": "PREPARING",
+            "estimatedBudget": 132000,
+            "confirmationBudget": 0,
+            "view": 0,
+            "type": "NORMAL",
+            "todoType": "쇼핑",
+            "country": "VN",
+            "region": "215",
+            "contents": "215",
+            "createdDate": "2019-11-11 03:09:39",
+            "liveDate": "2019-12-20 03:00:52",
+            "finishDate": null,
+            "images": [
+                "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778789healthy-girl-travelling-2019-11-11-09-38.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778791green-woman-travel-shutterstock-2019-11-11-09-38.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778793gettyimages-731743141-e1540323428637-2019-11-11-09-38.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778795belize-sup-best-of-travel-island-expeditions-2019-11-11-09-38.jpg"
+            ],
+            "hashTags": [
+                "133ddd"
+            ],
+           "user": {
+                "userId": 46,
+                "userName": "Long Bui",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+            },
+            "requestUsers": [
+                {
+                    "userSeq": 1,
+                    "proposal_amount": 40000,
+                    "detail_suggestions": "I will recording the whole map for you",
+                    "status": "PENDING",
+                    "userName": "BaoTest",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                }
+            ]
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
+### GetWishList [GET /task/get/wishs{?pageNumber,keyWord}]
+API request to get all current login user's wish item in wish management
+
+* Status `200` - Return list data item in `page` index.
+* Status `204` - These is no wish list available
+* Status `401` - The authentication is required
+
++ Parameters
+    + pageNumber - A variable that is required 
+    + keyWord - A query variable
+
++ Response 200 (application/json)
+        
+        [
+            {
+                "orderNo":103,
+                "title":"Want to see VN",
+                "status":"PREPARING",
+                "estimatedBudget":20000,
+                "createdDate":"2019-07-19 08:14:33"
+                "dueDate":"2019-07-19 08:14:33",
+            },
+            {
+                "orderNo":103,
+                "title":"Want to see VN",
+                "status":"PREPARING",
+                "estimatedBudget":20000,
+                "createdDate":"2019-07-19 08:14:33"
+                "dueDate":"2019-07-19 08:14:33",
+            },
+            {
+                "orderNo":103,
+                "title":"Want to see VN",
+                "status":"PREPARING",
+                "estimatedBudget":20000,
+                "createdDate":"2019-07-19 08:14:33"
+                "dueDate":"2019-07-19 08:14:33",
+            }
+        ]
+       
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!",
+        }
+        
+### GetWishItemDetail [GET /task/get/wishDetail{?orderNo}]
+API request to get a wish item in detail inside task management
+
+* Status `200` - Return details of the `orderNo` item.
+* Status `401` - The authentication is required
+
++ Parameters
+    + orderNo - A variable that is required
+    
++ Response 200 (application/json)
+
+        {
+            "orderNo": 5,
+            "title": "test 2",
+            "status": "PREPARING",
+            "estimatedBudget": 966,
+            "confirmationBudget": 0,
+            "view": 0,
+            "type": "NORMAL",
+            "wishType": "푸드",
+            "country": "JP",
+            "region": "1",
+            "contents": "1",
+            "createdDate": "2019-11-30 04:32:12",
+            "liveDate": "2019-11-20 05:00:53",
+            "finishDate": null,
+            "images": [
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/101433326030161366593/1573705702267summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers-2019-11-14-28-31.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/101433326030161366593/1573705702259Paris-2-2019-11-14-28-29.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/101433326030161366593/15737057022658NjRccP-2019-11-14-28-30.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/101433326030161366593/157370570227016845-beautiful-places-to-visit-wallpaper-2019-11-14-28-31.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/101433326030161366593/1573705702273146456044-2019-11-14-28-31.jpg"
+            ],
+            "hashTags": null,,
+            "user": {
+                "userId": 46,
+                "userName": "Long Bui",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+            },
+            "requestUsers": [
+                {
+                    "userSeq": 3,
+                    "proposal_amount": 40000,
+                    "detail_suggestions": "I will recording the whole map for you",
+                    "status": "PENDING",
+                    "userName": "BaoTest",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                }
+            ]
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
+### GetRequestDetail [GET /task/get/requestDetail/{?type,requestId}]
+API request to get other users request detail inside each wish or todo task 
+
+* Status `200` - Return the requester, the request type, title, proposal amount and detail suggest.
+* Status `401` - The authentication is required
+
++ Parameters
+    + type - A path variable that is required for a valid URL
+    + requestId (optional) - A query variable
+
++ response 200 (application/json)
+        
+        {
+            "requester":"UserB",
+            "type":"TODO",
+            "proposalAmount":230000,
+            "content":"I want to see the whole cave in VR"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### SubmitTroubleshoot [POST /task/troubleshoot]
+API reuqest to post troubleshoot or cancel issue for an order item, can be wish or doto
+| Attribute          | Description                                                |
+|--------------------|------------------------------------------------------------|
+| `troubleshootType` | Item type of cancel/troubleshoot, must be `TODO` or `WISH` |
+| `orderNo`          | seq                                                        |
+| `reason`           | Reason for cancel/troubleshoot the item                    |
+
+
+* Status `200` - The process is completed!.
+* Status `401` - The authentication is required
+
++ Request (application/json)
+        
+        {
+            "orderNo": 12
+            "troubleshootType":"TODO",
+            "reason":"Client requested service above payment price,
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "message":"Submit completed!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+## Group Home Information
+API request for wish and todo's general or utility 
+### GetPopularWishs [GET /task/popular-wishs]
+API request to get list of popular wish, maximum is 30 wishs
+
+* Status `200` - Return the list of the most popular wish.
+* Status `401` - The authentication is required
+
+
++ Response 200 (application/json)
+     
+        [
+            {
+                "orderNo":12,
+                "title":"Statue of Liberty flycam",
+                "country":"US",
+                "date":"2019-15-10 08:14:33",
+                "images":
+                [
+                    "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            },
+            {
+                "orderNo":13,
+                "title":"Statue of Liberty from the top",
+                "country":"US",
+                "date":"2019-15-10 10:16:33",
+                "images":
+                [
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            },
+            {
+                "orderNo":13,
+                "title":"Statue of Liberty from the top",
+                "country":"US",
+                "date":"2019-15-10 10:16:33",
+                "images":
+                [
+                    "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            },
+            {
+                "orderNo":13,
+                "title":"Statue of Liberty from the top",
+                "country":"US",
+                "date":"2019-15-10 10:16:33",
+                "images":
+                [
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            }
+        ]
+    
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### GetPopularTodos [GET /task/popular-todos]
+API request to get list of popular todos, return maximum 30 todos
+
+* Status `200` - Return the list of the most popular todo.
+* Status `401` - The authentication is required
+
++ Response 200 (application/json)
+
+        [
+            {
+                "orderNo":12,
+                "title":"Statue of Liberty flycam",
+                "country":"US",
+                "date":"2019-15-10 08:14:33",
+                "images":
+                [
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            },
+            {
+                "orderNo":13,
+                "title":"Statue of Liberty from the top",
+                "country":"US",
+                "date":"2019-15-10 10:16:33",
+                "images":
+                [
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            },
+            {
+                "orderNo":13,
+                "title":"Statue of Liberty from the top",
+                "country":"US",
+                "date":"2019-15-10 10:16:33",
+                "images":
+                [
+                    "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            },
+            {
+                "orderNo":13,
+                "title":"Statue of Liberty from the top",
+                "country":"US",
+                "date":"2019-15-10 10:16:33",
+                "images":
+                [
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                    "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                ],
+              "user": {
+                "userId": "XVZ47689",
+                "userName": "Long kk",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+            }
+        ]
+    
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!",
+        }
+
+### GetTodayTodos [GET /task/today-todos]
+API request to get the list of todo will be started on this day, returm maximum 30 todos
+
+* Status `200` - Return the todo list which have `dateLive` match with today.
+* Status `401` - The authentication is required
+
++ Response 200 (application/json)
+
+        [
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 10:18:05",
+                "confirmationBudget":200000,
+                 "images":
+                        [
+                            "https://images.luxuryescapes.com/lux-group/image/upload/q_auto:eco,c_fill,g_auto,ar_16:9/yrhgcx6rwlt0irtcblnh",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 10:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 11:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 05:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 05:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 05:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://i.redd.it/qczy9rxos8321.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 05:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            },
+            {
+                "title":"Recording Indochina plaza",
+                "orderNo":"109",
+                "country":"VN",
+                "dateLive":"2019-10-04 05:18:05",
+                "confirmationBudget":200000,
+                "images":
+                        [
+                            "https://handluggageonly.co.uk/wp-content/uploads/2016/01/Paris-2.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg",
+                            "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                        ]
+            }
+        ]
+    
+    
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### GetRecommendTaskList [GET /task/recommended-list]
+API request to get recommended list which selected by administrator from user post, maximum is 30
+
+* Status `200` - Return the recommended list
+* Status `401` - The authentication is required
+
++ Response 200 (application/json)
+
+        [
+              {
+                 "orderNo":56,
+                 "country":"UK",
+                 "title":"China Town 360 and VR video",
+                 "estimatedBudget":200000,
+                 "dateLive":"2019-10-15 10:19:50",
+                 "taskType":"todo/wish",
+                 "isFollow":true,
+                 "images":[
+                    "https://handluggageonly.co.uk/wp-content/uploads/2016/01/Paris-2.jpg",
+                    "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg"
+                 ],
+                 "user":{
+                    "userId":5687,
+                    "userName":"Long Bui",
+                    "profileImage":"https://i.redd.it/qczy9rxos8321.jpg"
+                 }
+              },
+              {
+                 "orderNo":56,
+                 "country":"UK",
+                 "title":"China Town 360 and VR video",
+                 "estimatedBudget":200000,
+                 "dateLive":"2019-10-15 10:19:50",
+                 "taskType":"todo/wish",
+                 "images":[
+                    "https://images.luxuryescapes.com/lux-group/image/upload/q_auto:eco,c_fill,g_auto,ar_16:9/yrhgcx6rwlt0irtcblnh",
+                    "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg"
+                 ],
+                 "user":{
+                    "userId":5687,
+                    "userName":"Long Bui",
+                    "isFollow":false,
+                    "profileImage":"https://i.redd.it/qczy9rxos8321.jpg"
+                 }
+              },
+              {
+                 "orderNo":56,
+                 "country":"UK",
+                 "title":"China Town 360 and VR video",
+                 "estimatedBudget":200000,
+                 "dateLive":"2019-10-15 10:19:50",
+                 "taskType":"todo/wish",
+                 "isFollow":true,
+                 "images":[
+                    "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg",
+                    "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg"
+                 ],
+                 "user":{
+                    "userId":5687,
+                    "userName":"Long Bui",
+                    "profileImage":"https://i.redd.it/qczy9rxos8321.jpg"
+                 }
+              }
+        ]
+       
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+## Group Task Creation
+API request to create new wish, todo and everything related
+### CreateWishRequest [POST /task/create/wishRequest]
+API request to create current logged in user wish request inside each todo of another user.
+| Attribute         | Description                          |
+|-------------------|--------------------------------------|
+| `orderNo`         | The unique id of each todo item      |
+| `requestedDetail` | Content of the wish from user        |
+| `proposalAmount`        | Estimed budget of wish request       |
+
+* Status `200` - The wish request is created
+* Status `401` - The authentication is required
+* Status `404` - Todo or wish does not exist or error!
+
++ Request (application/json)
+        
+        {
+            "orderNo":300,
+            "requestDetail":"Recording the whole map for me",
+            "proposalAmount":40000
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "code":"WISH_REQUEST_CREATED",
+            "message":"Wish request is completed!"
+        }
+
++ Response 401 (application/json)
+
+        {   "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 404 (application/json)
+
+        {   "code":"NOT_FOUND_ERROR",
+            "message":"Todo/Wish does not exist!"
+        }  
+
+
+### CreateWish [POST /task/create/wish]
+API request to create current logged in user wish for themselves
+| Attribute     | Description                                      |
+|---------------|--------------------------------------------------|
+| `title`       | The title of the wish                            |
+| `wishType`    | The category of this wish, ex: Travel, Bus, Girl |
+| `country`     | The country of the user creating wish            |
+| `region`      | The region of the user creating wish             |
+| `liveDate`    | The date the wish wanna see live                 |
+| `content`     | The content of the wish creating                 |
+| `type`        | The type of the wish, can be `VR` or `NORMAL`    |
+| `hashTag`     | The hash tag of current witsh creating           |
+| `image`       | The list of image about this wish                |
+
+* Status `200` - The wish request created !
+* Status `401` - The authentication is required !
+* Status `404` - Todo or wish does not exist or error!
+
++ Request (application/json)
+    
+        {
+            "title":"Recording Hanoi Museum",
+            "wishType":"Travel",
+            "country":"VN",
+            "region":"VN-QN",
+            "liveDate":"2019-10-15 08:01:28",
+            "budget":2000,
+            "contents":"I want to see outside",
+            "type":"VR",
+            "hashTag":["#hashTag1","hashTag2"],
+            "images":[   "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                         "https://i.redd.it/qczy9rxos8321.jpg",
+                         "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg"
+                      ]
+        }
+        
++ Response 200 (application/json)
+        
+        {
+            "code":"WISH_CREATED",
+            "message":"Wish is completed!"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
+### CreateTodoRequest [POST /task/create/todoRequest]
+API request to create current logged in user todo request inside each wish of another user.
+| Attribute         | Description                          |
+|-------------------|--------------------------------------|
+| `orderNo`         | The unique id of each todo item      |
+| `requestedDetail` | Content of the wish from user        |
+| `proposalAmount`        | Estimed budget of wish request       |
+
+* Status `200` - The todo request created !
+* Status `401` - The authentication is required !
+    
++ Request (application/json)
+
+        {
+            "orderNo":300,
+            "requestDetail":"I will recording the whole map for you",
+            "proposalAmount":40000
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "code":"TODO_REQUEST_CREATED",
+            "message":"Todo request created!"
+        }
+        
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 404 (application/json)
+
+        {   "code":"NOT_FOUND_ERROR",
+            "message":"Todo/Wish does not exist!"
+        } 
+        
+### UpdateStatusRequest [POST /task/statusRequest]
+API to update status of task, ACCEPTED OR REJECTED a request
+| Attribute         | Description                          |
+|-------------------|--------------------------------------|
+| `request_seq`     | The unique id of request             |
+| `status`          | Status of task: ACCEPTED / REJECTED  |
+| `type`            | Estimed budget of wish request       |
+
+* Status `200` - The todo request created !
+* Status `401` - The authentication is required !
+    
++ Request (application/json)
+
+        {
+            "request_seq":300,
+            "status":"REJECTED",
+            "type":"TODO"
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "code":"UPDATE_SUCCESS",
+            "message":"request confirmed!"
+        }
+        
++ Response 400 (application/json)
+
+        {   "code":"payment_error",
+            "message":"You not enought clip to create request, pls buy more Clip."
+        }             
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+
+### CreateTodo [POST /task/create/todo]
+API request to create current logged in user todo
+| Attribute         | Description                                      |
+|-------------------|--------------------------------------------------|
+| `title`           | The title of the todo                            |
+| `taskType`        | The category of this todo, ex: Travel, Bus, Girl |
+| `country`         | The country of the user creating wish            |
+| `region`          | The region of the user creating wish             |
+| `liveDate`        | The date the wish wanna see live                 |
+| `estimatedButged` | The date the wish wanna see live                 |
+| `content`         | The content of the wish creating                 |
+| `type`            | The type of the wish, can be `VR` or `NORMAL`    |
+| `hashTag`         | The list of hash tag of current witsh creating   |
+| `image`           | The list of image about this wish                |
+
+* Status `200` - The todo request created !
+* Status `401` - The authentication is required !
+
++ Request (application/json)
+    
+        {
+            "title":"Recording Hanoi Museum",
+            "taskType":2,
+            "country":"KR",
+            "region":"KR-SE",
+            "liveDate":"2019-10-15 08:01:28",
+            "estimatedBudget":200000,
+            "contents":"I will fly then recording outside",
+            "type":"NORMAL",
+            "hashTags":["#hashTag1","hashTag2"],
+            "images":
+            [
+                "www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                "https://i.redd.it/qczy9rxos8321.jpg",
+                "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg"
+            ]
+        }
+        
++ Response 200 (application/json)
+        
+        {
+            "code":"TODO_CREATED",
+            "message":"Todo is created!"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### SubmitRating [POST /task/create/rating]
+API request to let user submit rating of a todo/wish
+| Attribute       | Description                                               |
+|-----------------|-----------------------------------------------------------|
+| `orderNo`       | The unique id of wish or todo item                        |
+| `type`          | The type of current rating item, must be `WISH` or `TODO` |
+| `ratingPoint`   | The current point user given for the wish/todo item       |
+| `ratingContent` | The content user write about                              |
+
+* Status `200` - The rating submitted !
+* Status `401` - The authentication is required !
+
++ Request (application/json)
+
+        {
+            "orderNo":200,
+            "type":"WISH",
+            "ratingPoint":4,
+            "ratingContent":"Good video maker"
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "message":"Rating submitted!"
+        }
+
++ Response 400 (application/json)
+
+        {
+            "code":"rating_exit",
+            "message":"You already rate this user"
+        }        
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+
+
+        
+## Group Account Information
+API request for account information, include clip, transaction and so on.
+### GetAccountInfomation [GET /account/info]
+API request to get all information about the current logged in user
+
+* Status `200` - Return the user and account information
+* Status `401` - The authentication is required !
+
++ Response 200 (application/json)
+        
+        {
+            "userSeq": "46",
+            "userId": "URK7865529",
+            "userStatus": "WAIT",
+            "platformType": "RAS",
+            "userEmail": "duclongbuivn@gmail.com",
+            "userName": "Vegeta",
+            "userPhone": "",
+            "country": "KR",
+            "regionGroup": "전북",
+            "regionName": "장수군",
+            "userFavorite": [1,2,6,12],
+            "userClip": "0",
+            "profileIntroduction": "Abc",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+            "hashtags": ["tag1","tag2"],
+            "dateLastAccess": "2019-10-22 02:23:05",
+            "dateCreated": "2019-10-22 02:23:05"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+
+### GetAccountClipTransaction [GET /account/transaction-info/{?page,range,category}]
+API request to get the clip transaction history of current logged in user 
+
++ Parameters
+    + page - A variable that is required
+    + range - A variable that is required
+    + category - A query variable
+
++ Response 200 (application/json)
+
+        [
+               {
+                 "category":"Use",
+                 "amount":-10000,
+                 "titles":"ABC",
+                 "dateCreated":"2019-10-15 10:19:50"
+                },
+               {
+                 "category":"Use",
+                 "amount":-10000,
+                 "titles":"ABC",
+                 "dateCreated":"2019-10-15 10:19:50"
+                },
+               {
+                 "category":"Use",
+                 "amount":-10000,
+                 "titles":"ABC",
+                 "dateCreated":"2019-10-15 10:19:50"
+                },
+                {
+                 "category":"Use",
+                 "amount":-10000,
+                 "titles":"ABC",
+                 "dateCreated":"2019-10-15 10:19:50"
+                },
+                {
+                 "category":"Use",
+                 "amount":-10000,
+                 "titles":"ABC",
+                 "dateCreated":"2019-10-15 10:19:50"
+                }
+        ]
+       
+       
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### GetChatRoom [GET /account/chatroom/{?page}]
+API request to get all chat room of user 
+
++ Parameters
+    + page - A variable that is required
+    
++ Response 200 (application/json)
+
+        [
+           {
+              "roomId":345,
+              "lastMessage":"hi, how are you?",
+              "dateCreated":"2019 10 10 20:36",
+              "user":{
+                 "userId":123,
+                 "userName":"Long",
+                 "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+           },
+           {
+              "roomId":234,
+              "lastMessage":"hi, how are you?",
+              "dateCreated":"2019 10 10 20:36",
+              "user":{
+                 "userId":678,
+                 "userName":"Jason",
+                 "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+           },
+           {
+              "roomId":987,
+              "lastMessage":"hi, how are you?",
+              "dateCreated":"2019 10 10 20:36",
+              "user":{
+                 "userId":246,
+                 "userName":"Ngoc",
+                 "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+           }
+        ]
+       
+       
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+        
+### Get My Notice [GET /account/notice/{?page}]
+API request to get all notice
+
++ Parameters
+    + page - A variable that is required
+    
++ Response 200 (application/json)
+
+        [
+           {
+              "content":"Good morning, many interesting on Ras to know.",
+              "dateCreated":"2019 10 08 09:30"
+           },
+           {
+              "content":"hi, have a good day",
+              "dateCreated":"2019 10 08 09:30"
+           },
+           {
+              "content":"welcome to vr world",
+              "dateCreated":"2019 10 08 09:30"
+           },
+           {
+              "content":"Nice to meet you!",
+              "dateCreated":"2019 10 08 09:30"
+           }
+        ]
+       
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+
+##Group Public Information
+API request for public user information, included all data other users can see.
+### GetUserProfile [GET /user/profile/get/{userSeq}]
+API request to get user profile
+
+* Status `200` - Return the public profile of the user who posted wish/todo with `orderNo` 
+* Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions !
+
++ Parameters
+    + userSeq - A path variable that is required
+
++ Response 200 (application/json)
+        
+        {
+           "userName":"테스트1",
+           "profilePicture":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+           "country":"KR",
+           "regionGroup": "서울",
+           "regionName": "강남구",
+           "follower":12,
+           "isFollow":false,
+           "introduction":"데모앱 테스트중입니다."
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }
+        
+        
+### GetUserRatings [GET /user/post/{?userSeq,pageNumber}]
+API request to get rating information of another user has `userId`
+| Parameter       | Type | Description                                       |
+|-----------------|------|---------------------------------------------------|
+| `userSeq`       | int  | The unique id of a user                           |
+| `pageNumber`    | int  | The index of page which client request to display |
+
+* Status `200` - Return the list of rating of a user has `userSeq`
+* Status `401` - The authentication is required !
+
++ Parameters
+    + userSeq - A variable that is required
+    + pageNumber - A query variable
+
++ Response 200 (application/json)
+        
+        {
+           "total":12,
+           "listRating":[
+              {  
+                 "rate":4,
+                 "content":"Good video maker",
+                 "dateCreated":"2019-07-15:05:00:00",
+                 "user": {
+                    "userSeq": 46,
+                    "userName": "Long Bui",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 }
+              },
+                 {  
+                 "rate":4,
+                 "content":"Good video maker",
+                 "dateCreated":"2019-07-15:05:00:00",
+                 "user": {
+                    "userSeq": 46,
+                    "userName": "Long Bui",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 }
+              }
+           ]
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### GetUserTodo [GET /user/todo/{orderNo}]
+API request to get detail of todo item has `orderNo`
+| Parameter | Type | Description                                       |
+|-----------|------|---------------------------------------------------|
+| `orderNo` | int  | The unique id of a todo item                      |
+
+* Status `200` - Return the detail of todo item which has `orderNo`
+* Status `401` - The authentication is required !
+
++ Response 200 (application/json)
+
+        {
+            "username":"Bao123",
+            "todoTitle":"Recording Hanoi Ancient town",
+            "estimatedBudget":10000,
+            "todoType":"VR",
+            "category":"Travel",
+            "region":"Hanoi"
+            "country":"VN",
+            "liveDate":"2019-07-23 10:10:21",
+            "contents":"I will live streaming Hanoi Ancient Town",
+            "hashTag":["#hashTag1","hashTag2","hashTag3"],
+            "slideImage":
+            [
+                "http://localhost/res/orderNo/image1.png",
+                "http://localhost/res/orderNo/image2.png",
+                "http://localhost/res/orderNo/image3.png",
+                "http://localhost/res/orderNo/image4.png",
+                "http://localhost/res/orderNo/image5.png"
+            ]
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### GetUserWish [GET /user/wish/{orderNo}]
+API request to get detail of wish item has `orderNo`
+| Parameter | Type | Description                                       |
+|-----------|------|---------------------------------------------------|
+| `orderNo` | int  | The unique id of a wish item                      |
+
+* Status `200` - Return the detail of wish item which has `orderNo`
+* Status `401` - The authentication is required !
+
++ Response 200 (application/json)
+
+        {
+            "username":"Bao123",
+            "todoTitle":"Recording Hanoi Ancient town",
+            "estimatedBudget":10000,
+            "todoType":"VR",
+            "category":"Travel",
+            "region":"Hanoi"
+            "country":"VN",
+            "liveDate":"2019-07-23 08:10:20",
+            "contents":"I want to see live streaming Hanoi Ancient Town",
+            "hashTag":["#hashTag1","hashTag2","hashTag3"],
+            "slideImage":
+            [
+                "http://localhost/res/orderNo/image1.png",
+                "http://localhost/res/orderNo/image2.png",
+                "http://localhost/res/orderNo/image3.png",
+                "http://localhost/res/orderNo/image4.png",
+                "http://localhost/res/orderNo/image5.png"
+            ]
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+## Group Search
+API request for find result match with keyword and option
+
+### SearchTodos [GET /search/todos{?page,keyword,category,sort,todowish_type}]
+API request to get list todo from search bar
+* Status `200` - Return the list of `type` item, and will merge with GetWishBySearch in the future
+* Status `401` - The authentication is required !
+
++ Parameters
+    + page - A query variable
+    + keyword - Another query variable
+    + category (optional)- Another query variable :all not send, 1~24
+    + sort - Another query variable : Newest/Popular/Favorites
+        
++ Response 200 (application/json)
+        
+        {
+           "count":11000,
+           "total":[
+              {
+                 "title":"Recording State of Liberty",
+                 "orderNo":325,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "confirmationBudget":200000, 
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "Star":true,
+                 "isLike":true,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long Bui",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://handluggageonly.co.uk/wp-content/uploads/2016/01/Paris-2.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Festival Ha Noi - Viet Nam",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                  "isLike":true,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                  "isLike":true,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                  "isLike":true,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://images.luxuryescapes.com/lux-group/image/upload/q_auto:eco,c_fill,g_auto,ar_16:9/yrhgcx6rwlt0irtcblnh",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://wallpapercave.com/wp/8NjRccP.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              }
+           ]
+        }
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### SearchWishs [GET /search/wishs{?page,keyword,category,sort}]
+API request to get list wish from search bar
+* Status `200` - Return the list of `type` item, and will merge with GetWishBySearch in the future
+* Status `401` - The authentication is required !
+
++ Parameters
+    + page - A query variable
+    + keyword - Another query variable
+    + category (optional)- Another query variable :all not send, 1~24
+    + sort - Another query variable : Newest/Popular/Favorites
+        
++ Response 200 (application/json)
+        
+        {
+           "count":11000,
+           "total":[
+              {
+                 "title":"Recording State of Liberty",
+                 "orderNo":325,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "confirmationBudget":200000, 
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "Star":true,
+                 "isLike":false,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long Bui",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://handluggageonly.co.uk/wp-content/uploads/2016/01/Paris-2.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Festival Ha Noi - Viet Nam",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                 "isLike":false,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                 "isLike":false,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":false,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://images.luxuryescapes.com/lux-group/image/upload/q_auto:eco,c_fill,g_auto,ar_16:9/yrhgcx6rwlt0irtcblnh",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":false,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://wallpapercave.com/wp/8NjRccP.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"KOREA",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":false,
+                 "user":{
+                    "userId": 46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                  "images": [
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                  ]
+              }
+           ]
+        }
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### Search Posts by Title [GET /user/posts/get{?pageNumber,keyword}]
+API request to get list post from any user using search bar
+* Status `200` - Return the list of post item.
+* Status `401` - The authentication is required !
+
++ Parameters
+    + pageNumber - page number
+    + keyword - title keyword for searching
+
++ Response 200 (application/json)
+        
+            [
+              {
+                 "postSeq":123,
+                 "isLike": true,
+                 "title":"N서울타워 정상에서!",
+                 "liked":46,
+                 "comments":5,
+                 "hashTags":[
+                    "N서울타워",
+                    "정상"
+                 ],
+                 "image":"https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                 "user": {
+                    "userId": 46,
+                    "userName": "Long Bui",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                  }
+              },
+              {
+                 "postSeq":456,
+                 "isLike": false,
+                 "title":"세상에서 가장 아름다운 여행 장소들",
+                 "liked":126,
+                 "comments":38,
+                 "hashTag":[
+                    "여행장소",
+                    "장소들"
+                 ],
+                 "image":"https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                 "user": {
+                    "userId": 46,
+                    "userName": "Long Bui",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                  }
+              }
+           ]
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### Search Users By Hashtag [GET /users/lasted/get{?pageNumber,keyword}]
+API request to get list user from search bar
+
+* Status `200` - Return the list of user.
+* Status `401` - The authentication is required !
+
++ Parameters
+    + pageNumber - page number
+    + keyword - hashtag keyword for searching
+
++ Response 200 (application/json)
+        
+        [
+          {
+            "userSeq": 1,
+            "userName": "Vegeta",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar1.jpg",
+            "dateCreated": "2019 10 10 08:20:10",
+            "regionName": "NB",
+            "regionGroup": "Seoul",
+            "isFollow": true
+          },
+          {
+            "userSeq": 2,
+            "userName": "Kim Tea Hee",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar2.jpg",
+            "dateCreated": "2019 10 20 08:20:10",
+            "regionName": "Kangnam",
+            "regionGroup": "Busan",
+            "isFollow": false
+          },
+          {
+            "userSeq": 3,
+            "userName": "Jack",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar6.jpg",
+            "dateCreated": "2019 10 10 08:20:10",
+            "regionName": "NB",
+            "regionGroup": "Seoul",
+            "isFollow": false
+          },
+          {
+            "userSeq": 4,
+            "userName": "Jason",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar8.jpg",
+            "dateCreated": "2019 10 20 08:20:10",
+            "regionName": "Kangnam",
+            "regionGroup": "Busan",
+            "isFollow": true
+          }
+        ]
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### GetTodosMarket [GET /task/market/todos{?page,keyword,region,dateFrom,dateTo,type,sort,category,tags}]
+API request to get list wish from search filter
+
+* Status `200` - Return the list of wish matched with keyword.
+* Status `204` - These is no wish list available in range or keyword
+* Status `401` - The authentication is required !
+
++ Parameters
+    + page - A path variable that is required
+    + keyword (optional) - A query variable
+    + region (optional) - Another query variable
+    + dateFrom (optional) - Another query variable
+    + dateTo (optional) - Another query variable
+    + type (optional) - NOMAL OR VR
+    + sort(optional) - Another query variable Newest/Popular/Favorites
+    + category(optional)- Another query variable EX: 123
+    + tags(optional)- Another query variable EX: ["tag1","tag2"]
+
+    
++ Response 200 (application/json)
+        
+        {
+           "count":11000,
+           "total":[
+              {
+                 "title":"Recording State of Liberty",
+                 "orderNo":325,
+                 "country":"KR",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "confirmationBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "Star":true,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long Bui",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://handluggageonly.co.uk/wp-content/uploads/2016/01/Paris-2.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Festival Ha Noi - Viet Nam",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://images.luxuryescapes.com/lux-group/image/upload/q_auto:eco,c_fill,g_auto,ar_16:9/yrhgcx6rwlt0irtcblnh",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://wallpapercave.com/wp/8NjRccP.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              }
+           ]
+        }
+       
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### GetWishsMarket [GET /task/market/wishs{?page,keyword,region,dateFrom,dateTo,type,sort,category,tags}]
+API request to get list wish from search filter
+
+* Status `200` - Return the list of wish matched with keyword.
+* Status `204` - These is no wish list available in range or keyword
+* Status `401` - The authentication is required !
+
++ Parameters
+    + page - A path variable that is required
+    + keyword (optional) - A query variable
+    + region (optional) - Another query variable
+    + dateFrom (optional) - Another query variable
+    + dateTo (optional) - Another query variable
+    + type (optional) - NOMAL OR VR
+    + sort(optional) - Another query variable Newest/Popular/Favorites
+    + category(optional)- Another query variable EX: 123
+    + tags(optional)- Another query variable EX: ["tag1","tag2"]
+    
++ Response 200 (application/json)
+        
+        {
+           "count":11000,
+           "total":[
+              {
+                 "title":"Recording State of Liberty",
+                 "orderNo":325,
+                 "country":"KR",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "confirmationBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "Star":true,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long Bui",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://handluggageonly.co.uk/wp-content/uploads/2016/01/Paris-2.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Festival Ha Noi - Viet Nam",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"NOMAL",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://images.luxuryescapes.com/lux-group/image/upload/q_auto:eco,c_fill,g_auto,ar_16:9/yrhgcx6rwlt0irtcblnh",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://wallpapercave.com/wp/8NjRccP.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              },
+              {
+                 "title":"Ha Long festival",
+                 "orderNo":123,
+                 "country":"Italia",
+                 "regionGroup": "서울",
+                 "regionName": "강남구",
+                 "estimatedBudget":200000,
+                 "liveDate":"2019-19-10 10:10:10",
+                 "type":"VR",
+                 "DDay":1,
+                 "isLike":true,
+                 "user":{
+                    "userId":46,
+                    "userName":"Long kk",
+                    "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 },
+                 "images":[
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg",
+                    "https://i.redd.it/qczy9rxos8321.jpg",
+                    "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg",
+                    "https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+                 ]
+              }
+           ]
+        }
+       
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### GetLatestRegisterUsers [GET /users/lasted/get/{?pageNumber}]
+API request to get list latest register user from search filter
+
+* Status `200` - Return the list of latest register user matched with keyword.
+* Status `401` - The authentication is required !
+
++ Parameters
+    + pageNumber - A path variable that is required
+
++ Response 200 (application/json)
+        
+        [
+          {
+            "userSeq": 1,
+            "userName": "Vegeta",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar1.jpg",
+            "dateCreated": "2019 10 10 08:20:10",
+            "regionName": "NB",
+            "regionGroup": "Seoul",
+            "isFollow": true
+          },
+          {
+            "userSeq": 2,
+            "userName": "Kim Tea Hee",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar2.jpg",
+            "dateCreated": "2019 10 20 08:20:10",
+            "regionName": "Kangnam",
+            "regionGroup": "Busan",
+            "isFollow": false
+          },
+          {
+            "userSeq": 3,
+            "userName": "Jack",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar6.jpg",
+            "dateCreated": "2019 10 10 08:20:10",
+            "regionName": "NB",
+            "regionGroup": "Seoul",
+            "isFollow": false
+          },
+          {
+            "userSeq": 4,
+            "userName": "Jason",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar8.jpg",
+            "dateCreated": "2019 10 20 08:20:10",
+            "regionName": "Kangnam",
+            "regionGroup": "Busan",
+            "isFollow": true
+          }
+        ]
+
++ Response 401 (application/json)
+
+        {
+            "message":"Authorization is required!"
+        }
+
+### GetAllFollowedUsers [GET /users/i_follow/get/{?pageNumber}]
+API request to get list latest register user from search filter
+
+* Status `200` - Return the list of following user
+* Status `401` - The authentication is required !
+
++ Parameters
+    + pageNumber - A path variable that is required
+
++ Response 200 (application/json)
+        
+        [
+          {
+            "userSeq": 1,
+            "userName": "Vegeta",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar1.jpg",
+            "dateCreated": "2019 10 10 08:20:10",
+            "regionName": "NB",
+            "regionGroup": "Seoul",
+            "isFollow": true
+          },
+          {
+            "userSeq": 2,
+            "userName": "Kim Tea Hee",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar2.jpg",
+            "dateCreated": "2019 10 20 08:20:10",
+            "regionName": "Kangnam",
+            "regionGroup": "Busan",
+            "isFollow": true
+          },
+          {
+            "userSeq": 3,
+            "userName": "Jack",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar6.jpg",
+            "dateCreated": "2019 10 10 08:20:10",
+            "regionName": "NB",
+            "regionGroup": "Seoul",
+            "isFollow": true
+          },
+          {
+            "userSeq": 4,
+            "userName": "Jason",
+            "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/46/avatar8.jpg",
+            "dateCreated": "2019 10 20 08:20:10",
+            "regionName": "Kangnam",
+            "regionGroup": "Busan",
+            "isFollow": true
+          }
+        ]
+        
+
++ Response 401 (application/json)
+
+        {
+            "message":"Authorization is required!"
+        }
+        
+### Get Posts Of User [GET /user/posts/get/{?userSeq,pageNumber}]
+API to get posts of an user
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Parameters
+    + userSeq - A variable that is required
+    + pageNumber - A variable that is required
+
++ Response 200 (application/json)
+        
+        [
+              {
+                 "postSeq":123,
+                 "isLike": true,
+                 "title":"N서울타워 정상에서!",
+                 "liked":46,
+                 "comments":5,
+                 "hashTags":[
+                    "N서울타워",
+                    "정상"
+                 ],
+                 "image":"https://vitalsourcelife.files.wordpress.com/2014/10/beauty-of-nature.jpg"
+              },
+              {
+                 "postSeq":456,
+                 "isLike": false,
+                 "title":"세상에서 가장 아름다운 여행 장소들",
+                 "liked":126,
+                 "comments":38,
+                 "hashTag":[
+                    "여행장소",
+                    "장소들"
+                 ],
+                 "image":"https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg"
+              }
+           ]
+           
+                
+
+## Group Settings
+API request for get and update user, account and app settings.
+### ChangeUserInfos [PUT /setting/userinfo]
+API request to update user info in account settings and my page, all field is optional
+* Status `200` - User info is updated!
+* Status `400` - Wrong phone number format.
+* Status `401` - The authentication is required !
+
++ Request (application/json)
+        
+        {
+            "profileImage":"https://previews.123rf.com/images/tverdohlib/tverdohlib1611/tverdohlib161100798/65707174-pretty-girl-young-beautiful-woman-sexy-model-with-blue-eyes-and-long-curly-blond-hair-in-coat-prays-.jpg",
+            "userName":"홍길동",
+            "userEmail":"vegeta@gmail.com",
+            "userPhone":"0978478304",
+            "region":123,
+            "favorites":[
+                1,
+                2,
+                3
+                ],
+            "hashTags":[
+                "여행",
+                "건강"
+                ],
+            "profileIntroduction":"건강이 최고다!"
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"success",
+            "messsage":"Account settings updated!",
+        }
+
++ Response 400 (application/json)
+
+        {
+            "code":"number_error",
+            "message":"Wrong phone number format."
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### ChangeBankAccount [PUT /setting/bankaccount]
+API request to change bank account 
+| Attribute       | Description                                       |
+|-----------------|---------------------------------------------------|
+| `bankName`      | Name of the bank                                  |
+| `bankCode`      | International code of the bank                    |
+| `accountHolder` | Name of the account holder                        |
+| `accountNumber` | Bank account number                               |
+
+* Status `200` - Bank account is updated!
+* Status `401` - The authentication is required !
+
++ Request (application/json)
+        
+        {
+            "bankName":"VN Technological and Commercial Joint Stock Bank",
+            "bankCode":"VTCBVNVX",
+            "accountHolder":"Nguyen Van Son",
+            "accountNumber":"19024734820023"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "message":"Bank account updated!"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### ChangeNotificationSettings [PUT /setting/notification]
+API request to update notification settings
+| Attribute            | Description                                       |
+|----------------------|---------------------------------------------------|
+| `notice`             | notice notification setting on/off                |
+| `todoWish`           | todowish notification setting on/off              |
+| `follow`             | follow notification setting on/off                |
+
+* Status `200` - Notification is updated!
+* Status `401` - The authentication is required !
+
++ Request (application/json)
+        
+        {
+            "notice":"true",
+            "todoWish":"true",
+            "follow":"true",
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "messsage":"Account settings updated!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### GetUserNotifications [GET /user/notification]
+API get notifications setting of user
+
+* Status `200` - The current user infomation!
+* Status `401` - The authentication is required !
+
++ Response 200 (application/json)
+
+        {
+            "notice":"true",
+            "todoWish":"true",
+            "follow":"true",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### GetBankAccountSettings [GET /setting/get-bank]
+API request to get curent back account setting
+
+* Status `200` - The current user acount.
+* Status `400` - The bank account not set yet! 
+* Status `401` - The authentication is required !
+
++ Response 200 (application/json)
+        
+        {
+            "bankName":"VN Technological and Commercial Joint Stock Bank",
+            "bankCode":"VTCBVNVX",
+            "accountHolder":"Nguyen Van Son",
+            "accountNumber":"19024734820023"
+        }
+
++ Response 400 (application/json)
+        
+        {
+            "message":"The bank account not set yet!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+### Follow/Unfollow User [POST /user/follow]
+API request to follow/unfollow user
+| Attribute            | Description                                       |
+|----------------------|---------------------------------------------------|
+| `userSeq             | user seq                                          |
+| `isFollow`           | true/false                                        |
+
+* Status `200` - Updated!
+* Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions!
+
++ Request (application/json)
+        
+        {
+            "userSeq":123,
+            "isFollow":true
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"FOLLOW_UNFOLLOW_SUCCESS"
+            "messsage":"Follow/UnFollow success!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"InternalServerError!"
+        }        
+
+### Rate User [POST /user/rate]
+API request rate user
+| Attribute            | Description                                       |
+|----------------------|---------------------------------------------------|
+| `userSeq`             | user seq                                          |
+| `rate`               | 4                                                 |
+| `content`            | content of ratting                                |
+
+* Status `200` - Updated!
+* Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions!
+
++ Request (application/json)
+        
+        {
+            "userSeq":123,
+            "rate":4,
+            "content":"Good boy"
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"SUCCESS"
+            "messsage":"success!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"InternalServerError!"
+        }  
+
+## Group Post Operation
+
+### CreatePost [POST /post/create]
+API for create post
+| Attribute       | Description                                               |
+|-----------------|-----------------------------------------------------------|
+| `title`         | title of post                                             |
+| `hashTag`       | tags added                                                |
+| `image`         | Optinal                                                   |
+
+* Status `200` - The rating submitted !
+* Status `401` - The authentication is required !
+* Status `500` - Internal Server Error (DB error or some exceptions)
+
++ Request (application/json)
+
+        {
+           "title":"This is title",
+           "hashTags": [
+                "#hashTag1",
+                "hashTag2"
+              ],
+            "image":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/101433326030161366593/157370570227016845-beautiful-places-to-visit-wallpaper-2019-11-14-28-31.jpg"
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"post_created"
+            "message":"Post created"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }       
+        
+
+
+           
+        
+
+## Group Comment Operation
+
+### Comment for Post [POST /comment/post/create]
+API post a comment
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Request (application/json)
+        
+        {
+            "subjectId":123,
+            "content":"i like this place"
+        }
+
++ Response 200 (application/json)
+     
+        {
+            "code":"COMMENT_CREATED",
+            "message":"Comment is created!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }
+        
+### Get Comments of Post [GET /comment/post/get_all/{?postSeq,pageNumber}]
+API to get all comments of a post
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Parameters
+    + postSeq - This is post seq that we get comments 
+    + pageNumber - define page Number
+
++ Response 200  (application/json)
+        
+        [
+           {
+              "content":"does you discount?",
+              "dateCreated":"2019-15-10 10:16:33",
+              "user":{
+                 "userSeq":123,
+                 "userName":"Long",
+                 "profileImage":"https://i.pinimg.com/originals/77/fc/72/77fc72be8fed7f4ef4b56bf8e723a44a.jpg"
+              }
+           },
+           {
+              "content":"nice to meet you",
+              "dateCreated":"2019-12-10 10:16:33",
+              "user":{
+                 "userSeq":456,
+                 "userName":"Jason",
+                 "profileImage":"https://i.pinimg.com/originals/77/fc/72/77fc72be8fed7f4ef4b56bf8e723a44a.jpg"
+              }
+           },
+           {
+              "content":"nice to meet you",
+              "dateCreated":"2019-12-10 10:16:33",
+              "user":{
+                 "userSeq":1,
+                 "userName":"Ha",
+                 "profileImage":"https://i.pinimg.com/originals/77/fc/72/77fc72be8fed7f4ef4b56bf8e723a44a.jpg"
+              }
+           },
+           {
+              "content":"nice to meet you",
+              "dateCreated":"2019-12-10 10:16:33",
+              "user":{
+                 "userSeq":2,
+                 "userName":"Vegeta",
+                 "profileImage":"https://i.pinimg.com/originals/77/fc/72/77fc72be8fed7f4ef4b56bf8e723a44a.jpg"
+              }
+           },
+           {
+              "content":"nice to meet you",
+              "dateCreated":"2019-12-10 10:16:33",
+              "user":{
+                 "userSeq":3,
+                 "userName":"Mochi",
+                 "profileImage":"https://i.pinimg.com/originals/77/fc/72/77fc72be8fed7f4ef4b56bf8e723a44a.jpg"
+              }
+           }
+        ]
+        
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }
+        
+
+## Group Like Operation
+
+### Like Post [POST /post/like]
+API like or unlike a post
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Request (application/json)
+        
+        {
+            "subjectId":123,
+            "status":"LIKE/UNLIKE"
+        }
+
++ Response 200
+        
+        {
+            "code":"LIKE_UNLIKE_SUCCESS",
+            "message":"Like/Unlike success!"
+        }
+     
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }  
+        
+        
+### Like todo [POST /todo/like]
+API request to like todo
+| Attribute       | Description                                               |
+|-----------------|-----------------------------------------------------------|
+| `subjectId`       | The unique id of wish or todo item                        |
+| `status`        | LIKE or UNLIKE                                            |
+
+* Status `200` - like or unlike success !
+* Status `401` - The authentication is required !
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Request (application/json)
+
+        {
+            "subjectId":123,
+            "status":"LIKE/UNLIKE"
+        }
+
++ Response 200
+        
+        {
+            "code":"LIKE_UNLIKE_SUCCESS",
+            "message":"Like/Unlike success!"
+        }
+     
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }   
+        
+### Like wish [POST /wish/like]
+API request to like wish
+| Attribute       | Description                                               |
+|-----------------|-----------------------------------------------------------|
+| `subjectId`       | The unique id of wish or todo item                        |
+| `status`        | LIKE or UNLIKE                                            |
+
+* Status `200` - like or unlike success !
+* Status `401` - The authentication is required !
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Request (application/json)
+
+        {
+            "subjectId":123,
+            "status":"LIKE/UNLIKE"
+        }
+
++ Response 200
+        
+        {
+            "code":"LIKE_UNLIKE_SUCCESS",
+            "message":"Like/Unlike success!"
+        }
+     
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }     
+        
+        
+
+## Group Report Operation      
+### Report User [POST /user/report]
+API report user
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - DB Error or some exceptions!
+
++ Request (application/json)
+        
+        {
+            "userSeq":123,
+            "reason":"Internet have problem, The video quality is not good"
+        }
+
++ Response 200
+     
+        {
+            "code":"update_success",
+            "message":"Update success!!!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        } 
+        
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }          
+
+
+
+## Group Generic
+API request for get media content such as image, video, icon and all generic data such ast list countries, regions, favorites 
+### GetBanner [GET /home/advertising]
+API request to get image 
+| Attribute   | Description                                                        |
+|-------------|--------------------------------------------------------------------|
+| `category`  | The folder stored the image                                        |
+| `imageName` | The name of the image                                              |
+
+* Status `200` - Return the image url!
+* Status `401` - The authentication is required !
+
++ Request (application/json)
+     
++ Response 200 (application/json)
+        
+        {
+            "banner":
+                [
+                       {
+                         "id":1,
+                          "name":"banner1",
+                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR-technology-tech-skills-1024x544.jpg",
+                          "advertisingUrl":"https://www.mintpot.net/blank-3"
+                       },
+                       {
+                        "id":2,
+                          "name":"banner2",
+                        "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/1_BVk1wj8dQ1T8ZCsLDRR31Q.jpeg",
+                          "advertisingUrl":"https://www.mintpot.net/"
+                       },
+                       {
+                         "id":3,
+                          "name":"banner1",
+                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/568a33a902b3c_thumb900.jpg",
+                          "advertisingUrl":"https://www.mintpot.net/blank-3"
+                       },
+                       {
+                        "id":4,
+                          "name":"banner2",
+                        "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR_banner.jpg",
+                          "advertisingUrl":"https://www.mintpot.net/"
+                       }
+                ],
+            "advertisingMain":
+                [
+                       {
+                            "id":1,
+                          "name":"banner1",
+                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/vrworld.jpg",
+                          "advertisingUrl":"https://www.mintpot.net/"
+                       },
+                       {
+                          "id":2,
+                          "name":"banner2",
+                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/ARVR_banner.jpg",
+                          "advertisingUrl":"https://www.mintpot.net/blank-1"
+                       }
+                ],
+            "advertisingSub":
+            [
+                   {
+                      "id":1,
+                      "name":"banner1",
+                      "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/en-newsbanner-postlaunch-oculus.jpg",
+                      "advertisingUrl":"https://www.mintpot.net/blank-19"
+                   },
+                   {
+                        "id":2,
+                      "name":"banner2",
+                      "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/Web_Banner_VR.jpg",
+                      "advertisingUrl":"https://www.mintpot.net/blank-12"
+                   }
+            ]
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### GetCountry [GET /res/countries/{alpha2}]
+API request to get all country name and country code
+
+* Status `200` - Return the list of country with country code.
+
++ Response 200  (application/json)
+        
+        {"code":"410","name":"한국"}
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
+### GetGeoLocation [GET /res/geolocation]
+API request to get geolocation country name and country code
+
+* Status `200` - Return the list of country with country code.
+
++ Response 200  (application/json)
+        
+         [
+            {"code":"JP","name":"Japan"},
+            {"code":"KR","name":"Korea"},
+            {"code":"VN","name":"Viet Nam"}
+        ]   
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### GetEmailByNameAndPhone [GET /res/get_email{?username,phonenumber}]
+API get registered Email by name and phone
+
+* Status `200` - Return registered email
+* Status `404` - Return not found error
+
++ Parameters
+    + username - A query variable path
+    + phonenumber - A query variable path
+    
+
++ Response 200  (application/json)
+
+        "test123@gmail.com"
+
++ Response 404 (application/json)
+
+        {
+            "code":"NOT_FOUND_ERROR",
+            "message":"The username or phone number does not exist!",
+        }
+
+### GetAllGroup [GET /res/group]
+API get all Group
+
+* Status `200` - Return the list of group .
+
++ Response 200  (application/json)
+
+        [
+            "서울특별시",
+            "경기도",
+            "강원도",
+            "충청북도",
+            "충청남도",
+            "경상북도"
+        ]
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
+### GetRegion [POST /res/region]
+
+API get all regions on group
+API request to change favorite category of the user
+| Attribute          | Description                                       |
+|--------------------|---------------------------------------------------|
+| `groupName`        | Name of region group name                    |
+
+* Status `200` - Return the list of regions with region code.
+
++ Response 200  (application/json)
+
+        [
+            {
+                "code": "1",
+                "name": "강남구"
+            },
+            {
+                "code": "10",
+                "name": "도봉구"
+            },
+            {
+                "code": "11",
+                "name": "국대문구"
+            },
+            {
+                "code": "12",
+                "name": "동작구"
+            },
+            {
+                "code": "13",
+                "name": "마포구"
+            },
+            {
+                "code": "14",
+                "name": "서대문구"
+            }
+        ]
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+### GetAllFavorites [GET /res/favorites]
+API request to get all country name and country code
+
+* Status `200` - Return the list of favorite category with favorite id and image.
+
++ Response 200  (application/json)
+        
+        [
+            {
+                "id": 1,
+                "title": "Travel",
+                "image": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+            },
+            {
+                "id": 2,
+                "title": "Healty",
+                "image": "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg"
+            },
+            {
+                "id": 3,
+                "title": "Technology",
+                "image": "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg"
+            },
+            {
+                "id": 4,
+                "title": "KFC",
+                "image": "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg"
+            },
+            {
+                "id": 5,
+                "title": "Paris",
+                "image": "https://i.ytimg.com/vi/6lt2JfJdGSY/maxresdefault.jpg"
+            },
+            {
+                "id": 6,
+                "title": "Beach",
+                "image": "https://jllsly.com/wallpapers/summer-nature-wallpaper-desktop-background-Is-Cool-Wallpapers.jpg"
+            },
+            {
+                "id": 7,
+                "title": "Flower",
+                "image": "https://dayhikesneardenver.com/wp-content/uploads/2015/06/maroonbells_jerry_blank_craterlake_colorado.jpg"
+            }
+        ]
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+
+
+        
+## Group Upload Image
+### UploadImage [POST /res/upload/images]
+API to upload list of images 
+
+* Status `200` - Return the image category and image name, the image can get at: http://serverdomain.com/res/categoryName/imageName.png
+* Status `401` - The authentication is required !
+
++ Request (multipart/form-data; boundary=---BOUNDARY)
+        
+        -----BOUNDARY
+            Content-Disposition: form-data; name="images[files]"; filename="image1.jpg",filename="image2.jpg",filename="image3.jpg"
+            Content-Type: image/jpeg
+            Content-Transfer-Encoding: base64
+            
+            /9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+            HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
+            MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIA
+            AhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEB
+            AAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AL+AD//Z
+        -----BOUNDARY
+
++ Response 200 (application/json)
+        
+        [
+            "https://backend-resource.s3.ap-northeast-2.amazonaws.com/URK7865529/1000_F_135455671_IDuus0CbgMpizEhhN09JdxEWQDHVMf1V-2019-11-05-33-32.jpg",
+            "https://backend-resource.s3.ap-northeast-2.amazonaws.com/URK7865529/1000_F_135455671_IDuus0CbgMpizEhhN09JdxEWQDHVMf1V-2019-11-05-33-32.jpg",
+            "https://backend-resource.s3.ap-northeast-2.amazonaws.com/URK7865529/1000_F_135455671_IDuus0CbgMpizEhhN09JdxEWQDHVMf1V-2019-11-05-33-32.jpg"
+        ]
+
+## Group Support Center
+API request for help content and support.
+### GetFrequentlyAskedQuestions [GET /sup/get-faq]
+
+* Status `200` - Return the list FAQ
+* Status `401` - The authentication is required !
+
++ Response 200 (application/json)
+        
+        [
+            {"title":"How to get clip?","content":"This status code is similar to 204 (“No Content”) in that the response body must be empty"},
+            {"title":"How to get payment?","content":"This status code is similar to 204 (“No Content”) in that the response body must be empty"}
+        ]
+       
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+## Group Push notification
+API request for update fcm token and push notify
+### UpdateFcmToken [POST /fcm/token]
+Send registration id(fcm token) to backend
+
+* Status `204` - Update token success
+* Status `400` - Error
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "fcmToken":"Azoskcmvj79kgmnelepekwcjipuy8tfjf"
+        }
+
++ Response 204
+     
++ Response 400 (application/json)
+        
+        {
+            "message":"Data error",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
+        
+### UpdateLastAccessDate [POST /task/access]
+Update user's last access date and token.
+Send clip earning messages to users and earn 10 clips.
+
+* Status `204` - Update token success
+* Status `400` - Error
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "fcmToken":"Azoskcmvj79kgmnelepekwcjipuy8tfjf"
+        }
+
++ Response 204
+     
++ Response 400 (application/json)
+        
+        {
+            "message":"Data error",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### PushNotification [POST /fcm.googleapis.com/fcm/send]
+Data structure for push notification
+Have many event to push and receive notification, i define some event, we should additional during working.
+Data push and receive in data json :
+    "data": {
+    
+    }
+
+ 
+![name](https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/firebase-cloud-messaging-images/01-server-fcm-app.png)
+
+|         Event      |     Message                                                            |                                         
+|--------------------|------------------------------------------------------------------------|
+|  streaming_request |    You have new request to join your todo/wish                         |  
+|     live_start     |    Your todo/wish is start streaming after 10 seconds                  |                                             |
+|     matched_d1     |    Your streaming have one day left before start streaming             |
+|   follow_streaming |    Your streaming have new follower                                    |
+|  streaming_upload  |    New todo/list is uploaded                                           |
+
++ Response 200 (application/json)
+
+        {
+           "evt":"live_start",
+           "message":"Your todo/wish is start streaming after 5 seconds",
+           "msgData":{
+              "orderNo":123,
+              "taskType ":"TODO/WISH",
+              "title":"Travel make you richer",
+              "type":"VR/NORMAL",
+              "user":{
+                 "userSeq":123,
+                 "userName":"Long Bui",
+                 "profileImage":"https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+              }
+           }
+        }
+
+
+
+### GetNotification [GET /fcm/notification/{page}]
+API request to get all notifications
+
++ Parameters
+    + page - A query variable path
+    
++ Response 200 (application/json)
+
+        [
+           {
+              "event":"streaming_upload",
+              "date":"19-10-08 08:30",
+              "type":"TODO/WISH",
+              "id":12
+           },
+           {
+              "event":"matched_d1",
+              "date":"19-10-08 08:30",
+              "type":"TODO/WISH",
+              "id":123
+           },
+           {
+              "event":"matched_d1",
+              "date":"19-10-08 08:30",
+              "type":"TODO/WISH",
+              "id":654
+           }
+        ]
+
+## Group Streaming
+### UpdateStatusStreaming [POST /streaming/status]
+API request to notify backend start streaming, and backend notify to client using FCM notification to receive streaming
+
+* Status `200` - Success
+* Status `500` - Internal Server Error
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "orderId":123,
+            "type":"TODO/WISH",
+            "streamingType":"VR/NORMAL",
+            "status":"START/STOP"
+        }
+
++ Response 200
+     
+        {
+            "code":"update_success",
+            "message":"Update success!!!"
+        }
+     
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"error message"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### Ratting Streaming [POST /streaming/rate]
+API rate a streaming
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "orderId":123,
+            "rate":4,
+            "content":"good man, good job"
+        }
+
++ Response 200
+     
+        {
+            "code":"update_success",
+            "message":"Update success!!!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### Report Streaming [POST /streaming/report]
+API rate a streaming
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "orderId":123,
+            "reason":"Internet have problem, The video quality is not good"
+        }
+
++ Response 200
+     
+        {
+            "code":"update_success",
+            "message":"Update success!!!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        } 
+        
+### Send a chat message [POST /chat]
+This is not api description, using WebSocket, only data transper is correct
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "message":"hi, how are you?",
+            "from":123,
+            "to":456
+        }
+
++ Response 204
+
++ Response 401
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        } 
+        
+### Get Chat History [POST /chat/history]
+API to get chat history me and other
+
+|         Body       |     Description                                                            |                                         
+|--------------------|----------------------------------------------------------------------------|
+|      user_seq      |    Seq of other user                                                       | 
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+
++ Request (application/json)
+        
+        {
+            "user_seq":123
+        }
+
++ Response 200
+      
+        [
+            {
+                "message":"hi, how are you?",
+                "dateCreated":"2019 12 10 10:10:30",
+                "user": {
+                      "userSeq": 123,
+                      "userName": "Long",
+                      "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                    }
+                },
+            {
+                "message":"am fine, thank you and you?",
+                "dateCreated":"2019 12 10 10:11:30",
+                "user": {
+                      "userSeq": 456,
+                      "userName": "Jason",
+                      "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                    }
+            }
+        ]
+
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
