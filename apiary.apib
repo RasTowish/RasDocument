@@ -1582,7 +1582,7 @@ API request to get user profile
         }
         
         
-### GetUserRatings [GET /user/post/{?userSeq,pageNumber}]
+### GetUserRatings [GET /user/ratings/get/{?userSeq,pageNumber}]
 API request to get rating information of another user has `userId`
 | Parameter       | Type | Description                                       |
 |-----------------|------|---------------------------------------------------|
@@ -1591,6 +1591,7 @@ API request to get rating information of another user has `userId`
 
 * Status `200` - Return the list of rating of a user has `userSeq`
 * Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions !
 
 + Parameters
     + userSeq - A variable that is required
@@ -1630,6 +1631,13 @@ API request to get rating information of another user has `userId`
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }        
 
 ### GetUserTodo [GET /user/todo/{orderNo}]
 API request to get detail of todo item has `orderNo`
