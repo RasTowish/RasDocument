@@ -3722,16 +3722,18 @@ API request to notify backend start streaming, and backend notify to client usin
             "message":"Invalid access token! Authentication is required!"
         }
         
-### Ratting Streaming [POST /streaming/rate]
+### Rating Streaming [POST /streaming/rate]
 API rate a streaming
 
 * Status `200` - Success
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error!
 
 + Request (application/json)
         
         {
             "orderId":123,
+            "type":"todo"/"wish"
             "rate":4,
             "content":"good man, good job"
         }
@@ -3749,17 +3751,26 @@ API rate a streaming
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message"
+        }        
         
 ### Report Streaming [POST /streaming/report]
 API rate a streaming
 
 * Status `200` - Success
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error!
 
 + Request (application/json)
         
         {
             "orderId":123,
+            "type":"todo"/"wish",
             "reason":"Internet have problem, The video quality is not good"
         }
 
@@ -3776,6 +3787,13 @@ API rate a streaming
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         } 
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message"
+        }      
+        
         
 ### Send a chat message [POST /chat]
 This is not api description, using WebSocket, only data transper is correct
@@ -3921,42 +3939,36 @@ API request for normal login, using username and email
             "message":"Cannot execute query!",
         }
         
-### GetNotice [GET /notice/get{?pageNumber}]
-API request to get rating information of another user has `pageNumber`
+### List of Notice [GET /notice/{pageNumber}]
+
+Get list of Notice
+
 | Parameter       | Type | Description                                       |
 |-----------------|------|---------------------------------------------------|
 | `pageNumber`    | int  | The index of page which client request to display |
 
-* Status `200` - Return the list of rating of a user has `userSeq`
-* Status `401` - The authentication is required !
-
-+ Parameters
-    + pageNumber - A query variable
+* Status `200` - The request was processed successfully.
+* Status `401` - The authentication is required.
+* Status `500` - An error occurred inside the server.
 
 + Response 200 (application/json)
-        
+
         {
-           "total":12,
-           "listRating":[
+           "total":2,
+           "listNotice":[
               {  
-                 "rate":4,
-                 "content":"Good video maker",
-                 "dateCreated":"2019-07-15:05:00:00",
-                 "user": {
-                    "userSeq": 46,
-                    "userName": "Long Bui",
-                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
-                 }
+                 "notice_seq":1,
+                 "title":"We will check sysytem",
+                 "content":"System Check... blah blah blah\nblah blah blah",
+                 "writer_seq":1,
+                 "date_created":"2019-07-15:05:00:00",
               },
-                 {  
-                 "rate":4,
-                 "content":"Good video maker",
-                 "dateCreated":"2019-07-15:05:00:00",
-                 "user": {
-                    "userSeq": 46,
-                    "userName": "Long Bui",
-                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
-                 }
+              {  
+                 "notice_seq":2,
+                 "title":"System Updated",
+                 "content":"System Updated... blah blah blah\nblah blah blah",
+                 "writer_seq":1,
+                 "date_created":"2019-08-15:05:00:00",
               }
            ]
         }
@@ -3966,6 +3978,13 @@ API request to get rating information of another user has `pageNumber`
         {
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
         }
         
 ### SetNotice [POST /notice/set]
