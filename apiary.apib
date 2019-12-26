@@ -4015,13 +4015,13 @@ This returns a notice content with specified notice sequence number.
 ## Group ETC
 API request to create new wish, todo and everything related
 
-### FriendInvitationReward [POST /clip/invitation]
+### Friend Invitation Reward [POST /clip/invitation]
 
 API to request to reward a friend due
 
 | Attribute         | Description                          |
 |-------------------|--------------------------------------|
-| `user_seq`        | The unique id of user                |
+| `userSeq`        | The unique id of user                |
 
 * Status `200` - 4 Clip rewards have been given due to friends!
 * Status `400` - The clip has already been rewarded or does not exist.
@@ -4030,7 +4030,7 @@ API to request to reward a friend due
 + Request (application/json)
 
         {
-            "user_seq":49
+            "useSeq":49
         }
 
 + Response 200 (application/json)
@@ -4039,7 +4039,7 @@ API to request to reward a friend due
             "code":"OK",
             "message":"4 Clip rewards have been given due to friends!"
         }
-        
+
 + Response 400 (application/json)
 
         {   "code":"BAD_REQUEST",
