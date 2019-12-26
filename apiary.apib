@@ -1288,7 +1288,7 @@ API request to create current logged in user todo
             "title":"Recording Hanoi Museum",
             "taskType":2,
             "country":"KR",
-            "region":"KR-SE",
+            "region":100,
             "liveDate":"2019-10-15 08:01:28",
             "estimatedBudget":200000,
             "contents":"I will fly then recording outside",
@@ -3834,4 +3834,235 @@ API to get chat history me and other
         {
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
+        }
+
+        
+## Group Notice
+API request for notice process, include write/read/push notice.
+
+### PushNotice [POST /notice/push]
+API request for normal login, using username and email
+| Attribute           | Description                               |
+|---------------------|-------------------------------------------|
+| `email`             | The email which user registered           |
+| `password`          | The password registering with email above |
+
+* Status `200` - The login success, return all user data with token and a time to live
+* Status `400` - Wrong email or password
+* Status `404` - Email does not exist
+
++ Request (application/json)
+        
+        {
+            "email": "admin@mintpot.com",
+            "password"": "123123"
+        }
+    
++ Response 200 (application/json)
+
+        {
+          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
+           "userSeq":"46",
+           "userId":"URK7865529",
+           "userStatus":"WAIT",
+           "platformType":"RAS",
+           "userEmail":"duclongbuivn@gmail.com",
+           "userName":"Vegeta",
+           "userPhone":"",
+           "country":"KR",
+           "regionGroup":"전북",
+           "regionName":"장수군",
+           "userFavorite":[
+              1,
+              2,
+              6,
+              12
+           ],
+           "userClip":"0",
+           "profileIntroduction":"Abc",
+           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+           "hashtags":[
+              "tag1",
+              "tag2"
+           ],
+           "dateLastAccess":"2019-10-22 02:23:05",
+           "dateCreated":"2019-10-22 02:23:05"
+        }
+
++ Response 400 (application/json)
+        
+        {  
+            "code":"WRONG_EMAIL_PASSWORD",
+            "message":"Wrong email or password!"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "code":"EMAIL_NOT_EXIST",
+            "message":"The email does not exist!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
+### GetNotice [GET /notice/get{?pageNumber}]
+API request to get rating information of another user has `pageNumber`
+| Parameter       | Type | Description                                       |
+|-----------------|------|---------------------------------------------------|
+| `pageNumber`    | int  | The index of page which client request to display |
+
+* Status `200` - Return the list of rating of a user has `userSeq`
+* Status `401` - The authentication is required !
+
++ Parameters
+    + pageNumber - A query variable
+
++ Response 200 (application/json)
+        
+        {
+           "total":12,
+           "listRating":[
+              {  
+                 "rate":4,
+                 "content":"Good video maker",
+                 "dateCreated":"2019-07-15:05:00:00",
+                 "user": {
+                    "userSeq": 46,
+                    "userName": "Long Bui",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 }
+              },
+                 {  
+                 "rate":4,
+                 "content":"Good video maker",
+                 "dateCreated":"2019-07-15:05:00:00",
+                 "user": {
+                    "userSeq": 46,
+                    "userName": "Long Bui",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                 }
+              }
+           ]
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
+### SetNotice [POST /notice/set]
+API request for normal login, using username and email
+| Attribute           | Description                               |
+|---------------------|-------------------------------------------|
+| `email`             | The email which user registered           |
+| `password`          | The password registering with email above |
+
+* Status `200` - The login success, return all user data with token and a time to live
+* Status `400` - Wrong email or password
+* Status `404` - Email does not exist
+
++ Request (application/json)
+        
+        {
+            "email": "admin@mintpot.com",
+            "password"": "123123"
+        }
+    
++ Response 200 (application/json)
+
+        {
+          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
+           "userSeq":"46",
+           "userId":"URK7865529",
+           "userStatus":"WAIT",
+           "platformType":"RAS",
+           "userEmail":"duclongbuivn@gmail.com",
+           "userName":"Vegeta",
+           "userPhone":"",
+           "country":"KR",
+           "regionGroup":"전북",
+           "regionName":"장수군",
+           "userFavorite":[
+              1,
+              2,
+              6,
+              12
+           ],
+           "userClip":"0",
+           "profileIntroduction":"Abc",
+           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
+           "hashtags":[
+              "tag1",
+              "tag2"
+           ],
+           "dateLastAccess":"2019-10-22 02:23:05",
+           "dateCreated":"2019-10-22 02:23:05"
+        }
+
++ Response 400 (application/json)
+        
+        {  
+            "code":"WRONG_EMAIL_PASSWORD",
+            "message":"Wrong email or password!"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "code":"EMAIL_NOT_EXIST",
+            "message":"The email does not exist!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+## Group ETC
+API request to create new wish, todo and everything related
+
+### FriendInvitationReward [POST /clip/invitation]
+
+API to request to reward a friend due
+
+| Attribute         | Description                          |
+|-------------------|--------------------------------------|
+| `user_seq`        | The unique id of user                |
+
+* Status `200` - 4 Clip rewards have been given due to friends!
+* Status `400` - The clip has already been rewarded or does not exist.
+* Status `500` - An internal server error has occurred.
+    
++ Request (application/json)
+
+        {
+            "user_seq":49
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "code":"OK",
+            "message":"4 Clip rewards have been given due to friends!"
+        }
+        
++ Response 400 (application/json)
+
+        {   "code":"BAD_REQUEST",
+            "message":"The clip has already been rewarded or does not exist."
+        }             
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
         }
