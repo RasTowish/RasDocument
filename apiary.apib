@@ -2830,85 +2830,8 @@ API request to get curent back account setting
             "message":"Invalid access token! Authentication is required!"
         }
 
-### Follow/Unfollow User [POST /user/follow]
-API request to follow/unfollow user
-| Attribute            | Description                                       |
-|----------------------|---------------------------------------------------|
-| `userSeq             | user seq                                          |
-| `isFollow`           | true/false                                        |
+     
 
-* Status `200` - Updated!
-* Status `401` - The authentication is required !
-* Status `500` - DB Error or some exceptions!
-
-+ Request (application/json)
-        
-        {
-            "userSeq":123,
-            "isFollow":true
-        }
-
-+ Response 200 (application/json)
-        
-        {
-            "code":"FOLLOW_UNFOLLOW_SUCCESS"
-            "messsage":"Follow/UnFollow success!",
-        }
-
-+ Response 401 (application/json)
-
-        {
-            "code":"AUTH_REQUIRED",
-            "message":"Invalid access token! Authentication is required!"
-        }
-        
-+ Response 500 (application/json)
-
-        {
-            "code":"INTERNAL_SERVER_ERROR",
-            "message":"InternalServerError!"
-        }        
-
-### Rate User [POST /user/rate]
-API request rate user
-| Attribute            | Description                                       |
-|----------------------|---------------------------------------------------|
-| `userSeq`             | user seq                                          |
-| `rate`               | 4                                                 |
-| `content`            | content of ratting                                |
-
-* Status `200` - Updated!
-* Status `401` - The authentication is required !
-* Status `500` - DB Error or some exceptions!
-
-+ Request (application/json)
-        
-        {
-            "userSeq":123,
-            "rate":4,
-            "content":"Good boy"
-        }
-
-+ Response 200 (application/json)
-        
-        {
-            "code":"SUCCESS"
-            "messsage":"success!",
-        }
-
-+ Response 401 (application/json)
-
-        {
-            "code":"AUTH_REQUIRED",
-            "message":"Invalid access token! Authentication is required!"
-        }
-        
-+ Response 500 (application/json)
-
-        {
-            "code":"INTERNAL_SERVER_ERROR",
-            "message":"InternalServerError!"
-        }  
 
 ## Group Post Operation
 
@@ -3220,6 +3143,94 @@ API report user
             "code":"InternalServerError",
             "message":"Error Message"
         }          
+
+
+
+## Group Follow Operation  
+### Follow/Unfollow User [POST /user/follow]
+API request to follow/unfollow user
+| Attribute            | Description                                       |
+|----------------------|---------------------------------------------------|
+| `userSeq             | user seq                                          |
+| `isFollow`           | true/false                                        |
+
+* Status `200` - Updated!
+* Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions!
+
++ Request (application/json)
+        
+        {
+            "userSeq":123,
+            "isFollow":true
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"FOLLOW_UNFOLLOW_SUCCESS"
+            "messsage":"Follow/UnFollow success!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"InternalServerError!"
+        }   
+
+
+
+
+## Group Rate Operation  
+### Rate User [POST /user/rate]
+API request rate user
+| Attribute            | Description                                       |
+|----------------------|---------------------------------------------------|
+| `userSeq`             | user seq                                          |
+| `rate`               | 4                                                 |
+| `content`            | content of ratting                                |
+
+* Status `200` - Updated!
+* Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions!
+
++ Request (application/json)
+        
+        {
+            "userSeq":123,
+            "rate":4,
+            "content":"Good boy"
+        }
+
++ Response 200 (application/json)
+        
+        {
+            "code":"SUCCESS"
+            "messsage":"success!",
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"InternalServerError!"
+        }  
+
 
 
 
