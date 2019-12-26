@@ -383,40 +383,114 @@ API request to get recovery password when user forgot it
 
 ## Group Task Management
 API request for wish and todo management, include get list todo/wish and handle wish/todo task
-### List of Notice [GET /notice?pageNumber={pageNumber}]
+### GetTodoList [GET /task/get/todos?pageNumber={?pageNumber,keyWord}]
+API request to get all current login user's todo item in todo management
 
-Get list of Notice
+* Status `200` - Return list data item in `page` index.
+* Status `204` - These is no todo list available
+* Status `401` - The authentication is required
 
-| Parameter       | Type | Description                                       |
-|-----------------|------|---------------------------------------------------|
-| `pageNumber`    | int  | The index of page which client request to display |
++ Parameters
+    + pageNumber - A variable that is required
+    + keyWord (optional) - A query variable
+ 
++ Response 200 (application/json)
+        
+        [
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            },
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            },
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            }
+          ]
+       
 
-* Status `200` - The request was processed successfully.
-* Status `401` - The authentication is required.
-* Status `500` - An error occurred inside the server.
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!",
+        }
+
+### GetTodoItemDetail [GET /task/get/todoDetail{?orderNo}]
+API request to get a todo item in detail inside task management
+
+* Status `200` - Return details of the `orderNo` item.
+* Status `401` - The authentication is required
+
++ Parameters
+    + orderNo - A variable that is required
 
 + Response 200 (application/json)
 
         {
-           "total":2,
-           "listNotice":[
-              {  
-                 "notice_seq":1,
-                 "title":"We will check sysytem",
-                 "content":"System Check... blah blah blah\nblah blah blah",
-                 "writer_seq":1,
-                 "date_created":"2019-07-15:05:00:00",
-              },
-              {  
-                 "notice_seq":2,
-                 "title":"System Updated",
-                 "content":"System Updated... blah blah blah\nblah blah blah",
-                 "writer_seq":1,
-                 "date_created":"2019-08-15:05:00:00",
-              }
-           ]
+            "orderNo": 132,
+            "title": "132ddd",
+            "status": "PREPARING",
+            "estimatedBudget": 132000,
+            "confirmationBudget": 0,
+            "view": 0,
+            "type": "NORMAL",
+            "todoType": "쇼핑",
+            "country": "VN",
+            "region": "215",
+            "contents": "215",
+            "createdDate": "2019-11-11 03:09:39",
+            "liveDate": "2019-12-20 03:00:52",
+            "finishDate": null,
+            "images": [
+                "https://www.visitportugal.com/sites/www.visitportugal.com/files/mediateca/23_660x371.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778789healthy-girl-travelling-2019-11-11-09-38.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778791green-woman-travel-shutterstock-2019-11-11-09-38.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778793gettyimages-731743141-e1540323428637-2019-11-11-09-38.jpg",
+                "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/UXY79557241573441778795belize-sup-best-of-travel-island-expeditions-2019-11-11-09-38.jpg"
+            ],
+            "hashTags": [
+                "133ddd"
+            ],
+           "user": {
+                "userId": 46,
+                "userName": "Long Bui",
+                "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+            },
+            "requestUsers": [
+                {
+                    "userSeq": 1,
+                    "proposal_amount": 40000,
+                    "detail_suggestions": "I will recording the whole map for you",
+                    "status": "PENDING",
+                    "userName": "BaoTest",
+                    "profileImage": "https://cache.desktopnexus.com/thumbseg/2351/2351437-bigthumbnail.jpg"
+                }
+            ]
         }
-
+        
 + Response 401 (application/json)
 
         {
@@ -427,10 +501,10 @@ Get list of Notice
 + Response 500 (application/json)
 
         {
-            "code":"INTERNAL_SERVER_ERROR",
-            "message":"Error Message!"
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
         }
-
+        
 ### GetWishList [GET /task/get/wishs{?pageNumber,keyWord}]
 API request to get all current login user's wish item in wish management
 
@@ -3648,7 +3722,7 @@ API request to notify backend start streaming, and backend notify to client usin
             "message":"Invalid access token! Authentication is required!"
         }
         
-### Ratting Streaming [POST /streaming/rate]
+### Rating Streaming [POST /streaming/rate]
 API rate a streaming
 
 * Status `200` - Success
@@ -3657,7 +3731,8 @@ API rate a streaming
 + Request (application/json)
         
         {
-            "orderId":123,
+            "orderSeq":123,
+            "type":"todo"/"wish",
             "rate":4,
             "content":"good man, good job"
         }
@@ -3777,77 +3852,82 @@ API to get chat history me and other
 ## Group Notice
 API request for notice process, include write/read/push notice.
 
-### PushNotice [POST /notice/push]
-API request for normal login, using username and email
-| Attribute           | Description                               |
-|---------------------|-------------------------------------------|
-| `email`             | The email which user registered           |
-| `password`          | The password registering with email above |
+### Push Notification of Notice [POST /notice/push/{notice_seq}]
 
-* Status `200` - The login success, return all user data with token and a time to live
-* Status `400` - Wrong email or password
-* Status `404` - Email does not exist
+Push notification of notice to all users (except for users who set Notice 'False' in notification setting)
+
+| Attribute         | Description                               |
+|-------------------|-------------------------------------------|
+| `notice_seq`           | Sequence of notice           |
+
+| Error code | HTTP code | Description |
+| --- | --- | --- |
+|`invalid_data`| 400 | notice_seq or is_read are invalid |
+|`no_exist`| 400 | notice_seq not exist |
 
 + Request (application/json)
-        
-        {
-            "email": "admin@mintpot.com",
-            "password"": "123123"
-        }
-    
-+ Response 200 (application/json)
 
         {
-          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
-           "userSeq":"46",
-           "userId":"URK7865529",
-           "userStatus":"WAIT",
-           "platformType":"RAS",
-           "userEmail":"duclongbuivn@gmail.com",
-           "userName":"Vegeta",
-           "userPhone":"",
-           "country":"KR",
-           "regionGroup":"전북",
-           "regionName":"장수군",
-           "userFavorite":[
-              1,
-              2,
-              6,
-              12
-           ],
-           "userClip":"0",
-           "profileIntroduction":"Abc",
-           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
-           "hashtags":[
-              "tag1",
-              "tag2"
-           ],
-           "dateLastAccess":"2019-10-22 02:23:05",
-           "dateCreated":"2019-10-22 02:23:05"
+            "notice_seq": 1
         }
 
 + Response 400 (application/json)
-        
-        {  
-            "code":"WRONG_EMAIL_PASSWORD",
-            "message":"Wrong email or password!"
+
+        {
+            "code":"INVALID_DATA",
+            "message":"The parameter is incorrect."
         }
 
-+ Response 404 (application/json)
-        
++ Response 400 (application/json)
+
         {
-            "code":"EMAIL_NOT_EXIST",
-            "message":"The email does not exist!"
+            "code":"NO_EXIST",
+            "message":"The requested data does not exist."
         }
+
         
+### Add A Notice [POST /notice]
+
+Create new notice information
+
+| Attribute         | Description                               |
+|-------------------|-------------------------------------------|
+| `title`           | The unique id of each todo item           |
+| `content`         | Content of the notice from administrator  |
+
+* Status `200` - The request was processed successfully.
+* Status `401` - The authentication is required.
+* Status `500` - An error occurred inside the server.
+
++ Request (application/json)
+
+        {  
+            "title":"We will check sysytem",
+            "content":"System Check... blah blah blah\nblah blah blah"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "code":"NEW_NOTICE_CREATED",
+            "message":"New notice is created"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
         }
         
-### List of Notice [GET /notice/{pageNumber}]
+### List of Notice [GET /notice?pageNumber={pageNumber}]
 
 Get list of Notice
 
@@ -3860,21 +3940,19 @@ Get list of Notice
 * Status `500` - An error occurred inside the server.
 
 + Response 200 (application/json)
-
+    
         {
            "total":2,
            "listNotice":[
               {  
                  "notice_seq":1,
                  "title":"We will check sysytem",
-                 "content":"System Check... blah blah blah\nblah blah blah",
                  "writer_seq":1,
                  "date_created":"2019-07-15:05:00:00",
               },
               {  
                  "notice_seq":2,
                  "title":"System Updated",
-                 "content":"System Updated... blah blah blah\nblah blah blah",
                  "writer_seq":1,
                  "date_created":"2019-08-15:05:00:00",
               }
@@ -3895,75 +3973,44 @@ Get list of Notice
             "message":"Error Message!"
         }
         
-### SetNotice [POST /notice/set]
-API request for normal login, using username and email
-| Attribute           | Description                               |
-|---------------------|-------------------------------------------|
-| `email`             | The email which user registered           |
-| `password`          | The password registering with email above |
 
-* Status `200` - The login success, return all user data with token and a time to live
-* Status `400` - Wrong email or password
-* Status `404` - Email does not exist
+### Get A Notice [GET /notice/{notice_seq}]
 
-+ Request (application/json)
-        
-        {
-            "email": "admin@mintpot.com",
-            "password"": "123123"
-        }
-    
+This returns a notice content with specified notice sequence number.
+
+| Parameter       | Type | Description                                       |
+|-----------------|------|---------------------------------------------------|
+| `notice_seq`    | int  | Unique identifier for a notice                    |
+
+* Status `200` - The request was processed successfully.
+* Status `401` - The authentication is required.
+* Status `500` - An error occurred inside the server.
+
 + Response 200 (application/json)
-
-        {
-          "token": "QDSjcJNNgf0NZwHHLene4oOfdKYMpqXmB8f4SXZaLdwYSCSFPsw86YufAVTApTTA",
-           "userSeq":"46",
-           "userId":"URK7865529",
-           "userStatus":"WAIT",
-           "platformType":"RAS",
-           "userEmail":"duclongbuivn@gmail.com",
-           "userName":"Vegeta",
-           "userPhone":"",
-           "country":"KR",
-           "regionGroup":"전북",
-           "regionName":"장수군",
-           "userFavorite":[
-              1,
-              2,
-              6,
-              12
-           ],
-           "userClip":"0",
-           "profileIntroduction":"Abc",
-           "profileImage":"https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573798510646quan3-590x308-2019-11-15-15-10.jpg",
-           "hashtags":[
-              "tag1",
-              "tag2"
-           ],
-           "dateLastAccess":"2019-10-22 02:23:05",
-           "dateCreated":"2019-10-22 02:23:05"
-        }
-
-+ Response 400 (application/json)
-        
+    
         {  
-            "code":"WRONG_EMAIL_PASSWORD",
-            "message":"Wrong email or password!"
+                 "notice_seq":1,
+                 "title":"We will check sysytem",
+                 "content":"System Check... blah blah blah\nblah blah blah",
+                 "writer_seq":1,
+                 "date_created":"2019-07-15:05:00:00",
         }
 
-+ Response 404 (application/json)
-        
+
++ Response 401 (application/json)
+
         {
-            "code":"EMAIL_NOT_EXIST",
-            "message":"The email does not exist!"
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
         }
-        
+
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
         }
+        
 ## Group ETC
 API request to create new wish, todo and everything related
 
