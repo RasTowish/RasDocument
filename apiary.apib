@@ -3684,6 +3684,7 @@ API request to get all notifications
            }
         ]
 
+
 ## Group Streaming
 ### UpdateStatusStreaming [POST /streaming/status]
 API request to notify backend start streaming, and backend notify to client using FCM notification to receive streaming
@@ -3849,7 +3850,57 @@ API to get chat history me and other
             "message":"Invalid access token! Authentication is required!"
         }
 
-        
+### Raise A Issue [POST /task/issue]
+User raise issue about live streaming.
+And administrator will make a judgment about the problem.
+
+[Insert]
+tb_status_peding 
+
+[Get A pending_seq]
+
+[Update]
+tb_board_todo : status(PENDING), pending_seq
+tb_board_wish : status(PENDING), pending_seq
+
+| Attribute         | Description                               |
+|-------------------|-------------------------------------------|
+| `is_streamer`     | If user is streamer, the value is 'Y'     |
+| `comment`         | Description of issue                      |
+
+* Status `200` - The request was processed successfully.
+* Status `401` - The authentication is required.
+* Status `500` - An error occurred inside the server.
+
++ Request (application/json)
+
+        {  
+                 "is_streamer":"N",
+                 "comment":"Streamer did not broadcast properly.",
+        }
+
++ Response 200 (application/json)
+
+        {
+            "code":"NEW_ISSUE_CREATED",
+            "message":"New issue is created"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"An error occurred inside the server!"
+        }
+
+
 ## Group Notice
 API request for notice process, include write/read/push notice.
 
