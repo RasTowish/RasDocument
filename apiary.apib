@@ -3699,7 +3699,7 @@ API request to notify backend start streaming, and backend notify to client usin
             "orderId":123,
             "type":"TODO/WISH",
             "streamingType":"VR/NORMAL",
-            "status":"START/STOP"
+            "status":"START/STOP/VIEWER_STOP"
         }
 
 + Response 200
@@ -3854,13 +3854,16 @@ API to get chat history me and other
 User raise issue about live streaming.
 And administrator will make a judgment about the problem.
 
-[Insert]
-tb_status_peding 
+* Insert
 
-[Get A pending_seq]
+tb_status_pending
 
-[Update]
+* Get a pending_seq
+
+* Update
+
 tb_board_todo : status(PENDING), pending_seq
+
 tb_board_wish : status(PENDING), pending_seq
 
 | Attribute         | Description                               |
