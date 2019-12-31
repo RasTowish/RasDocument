@@ -3656,32 +3656,35 @@ Data push and receive in data json :
 
 
 
-### GetNotification [GET /fcm/notification/{page}]
+### GetNotification [GET /fcm/notification/{pageNumber}]
 API request to get all notifications
 
 + Parameters
-    + page - A query variable path
+    + pageNumber - A query variable path
     
 + Response 200 (application/json)
 
         [
            {
+              "seq":1,
               "event":"streaming_upload",
-              "date":"19-10-08 08:30",
-              "type":"TODO/WISH",
-              "id":12
+              "date":"2019 10 10 08:10:30",
+              "title":"this is title",
+              "content":"this is content"
            },
            {
-              "event":"matched_d1",
-              "date":"19-10-08 08:30",
-              "type":"TODO/WISH",
-              "id":123
+              "seq":2,
+              "event":"streaming_upload",
+              "date":"2019 10 10 08:10:30",
+              "title":"this is title",
+              "content":"this is content"
            },
            {
-              "event":"matched_d1",
-              "date":"19-10-08 08:30",
-              "type":"TODO/WISH",
-              "id":654
+              "seq":3,
+              "event":"streaming_upload",
+              "date":"2019 10 10 08:10:30",
+              "title":"this is title",
+              "content":"this is content"
            }
         ]
 
@@ -4020,7 +4023,8 @@ This returns a notice content with specified notice sequence number.
 Api request for payment 
 
 ### Buy Clips [POST /clip/buy]
-API to request to buy clips
+API to request to buy clips.
+SIGNATURE_ALGORITHM: SHA1withRSA
 
 | Attribute         | Description                          |
 |-------------------|--------------------------------------|
@@ -4039,12 +4043,15 @@ API to request to buy clips
 + Request (application/json)
 
         {
-            "orderId":"GPA.3338-5754-8429-79307",
-            "packageName":"net.mintpot.ras",
-            "productId":"towish_3300",
-            "purchaseTime":1577674152163,
-            "purchaseState":0,
-            "purchaseToken":"mmgkhianokhcihfphpafcneb.AO-J1OyUz1wyTu7U45VB_Mt0bRu39K64Lz2yWQsBDjrZWcPTUG2DqIIVIJvY2K-SZb2zxsXVWhCuLAduacfaLv3_T0fHp8WRNQHZ9fp7p5d_lAjS4vou21c",
+            "data" : {
+                "orderId":"GPA.3338-5754-8429-79307",
+                "packageName":"net.mintpot.ras",
+                "productId":"towish_3300",
+                "purchaseTime":1577674152163,
+                "purchaseState":0,
+                "purchaseToken":"mmgkhianokhcihfphpafcneb.AO-J1OyUz1wyTu7U45VB_Mt0bRu39K64Lz2yWQsBDjrZWcPTUG2DqIIVIJvY2K-SZb2zxsXVWhCuLAduacfaLv3_T0fHp8WRNQHZ9fp7p5d_lAjS4vou21c",
+                "acknowledged" : false
+            },
             "signature":"VgfaBU8WQpWz2kfKIbExQW1JTmknVDgws7nbPTOLo1vzKTubAhg5A4lJWlYryDs31i3KLoH9UySHuyXJi2XBbGDmLYwu9n+lutk+rfrl6XVOVVXCfSVKvuDA6IWGu4hd6jqELquz9UCkVyHV3GBzBMAJnXb6BJ7p0LcIpcYhSSUOX3fq8j87KoJRn6g1yct2KOfaSpIRkceqVwxKlaP8RvjzxeBipVPPSa72MVzF8b++fW4hGeKIaE8ZAoaU0t5sb9Qq+6vfWkH355L0fpMXUh/v7Imqhin8FURYsd3sgcVzoSYogRO7QUtmxbntQFtvbvfvP7ZLpGztWOJx8PFKZw=="
         }
         
@@ -4107,4 +4114,36 @@ API to request to reward a friend due
         {
             "code":"SERVER_INTERNAL_ERROR",
             "message":"An internal server error has occurred.",
+        }
+
+        
+### Daily Access [GET /etc/daily-access]
+
+All users can receive clip rewards once a day.
+
+* Status `200` - The request was processed successfully.
+* Status `401` - The authentication is required.
+* Status `500` - An error occurred inside the server.
+* Status `501` - The authentication is required.
+
++ Response 200 (application/json)
+    
+        {  
+            "code":"UPDATE_SUCCESS",
+            "message":"Daily acess is successful!"
+        }
+
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"ALREADY_ACCESSED",
+            "message":"You have already received your daily access reward."
         }
