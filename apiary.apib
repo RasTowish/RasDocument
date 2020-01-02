@@ -4124,6 +4124,44 @@ API to request to clip history
             "code":"SERVER_INTERNAL_ERROR",
             "message":"An internal server error has occurred.",
         }
+        
+        
+### Clip Withdraw [POST /clip/withdraw]
+API to request to withdraw
+
+
+| Attribute         | Description                          |
+|-------------------|--------------------------------------|
+| `bank`          | bank name |
+| `accountHolder`          | account holder |
+| `accountNumber`          | account number |
+
+
+* Status `200` - Withdraw record has been given!
+* Status `400` - Bad Request.
+* Status `500` - An internal server error has occurred.
+
+
++ Response 200 (application/json)
+    
+        {
+            "code":"OK",
+            "message":"Withdraw record has been given!"
+        }
+
++ Response 400 (application/json)
+
+        {   "code":"BAD_REQUEST",
+            "message":"Bad request."
+        }   
+
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
 
 
 ## Group ETC
