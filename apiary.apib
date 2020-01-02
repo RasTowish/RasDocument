@@ -3659,6 +3659,10 @@ Data push and receive in data json :
 ### GetNotification [GET /user/notifications/get/{pageNumber}]
 API request to get all notifications
 
+* Status `200` - Success
+* Status `500` - Internal Server Error
+* Status `401` - Authentication is required!
+
 + Parameters
     + pageNumber - A query variable path
     
@@ -3667,26 +3671,36 @@ API request to get all notifications
         [
            {
               "seq":1,
-              "event":"streaming_upload",
-              "date_created":"2019 10 10 08:10:30",
+              "dateCreated":"2019 10 10 08:10:30",
               "title":"this is title",
               "content":"this is content"
            },
            {
               "seq":2,
-              "event":"streaming_upload",
-              "date_created":"2019 10 10 08:10:30",
+              "dateCreated":"2019 10 10 08:10:30",
               "title":"this is title",
               "content":"this is content"
            },
            {
               "seq":3,
-              "event":"streaming_upload",
-              "date_created":"2019 10 10 08:10:30",
+              "dateCreated":"2019 10 10 08:10:30",
               "title":"this is title",
               "content":"this is content"
            }
         ]
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"error message"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!"
+        }        
 
 
 ## Group Streaming
