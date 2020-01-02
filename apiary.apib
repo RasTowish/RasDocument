@@ -3668,21 +3668,21 @@ API request to get all notifications
            {
               "seq":1,
               "event":"streaming_upload",
-              "date":"2019 10 10 08:10:30",
+              "date_created":"2019 10 10 08:10:30",
               "title":"this is title",
               "content":"this is content"
            },
            {
               "seq":2,
               "event":"streaming_upload",
-              "date":"2019 10 10 08:10:30",
+              "date_created":"2019 10 10 08:10:30",
               "title":"this is title",
               "content":"this is content"
            },
            {
               "seq":3,
               "event":"streaming_upload",
-              "date":"2019 10 10 08:10:30",
+              "date_created":"2019 10 10 08:10:30",
               "title":"this is title",
               "content":"this is content"
            }
@@ -3948,23 +3948,20 @@ Get list of Notice
 
 + Response 200 (application/json)
     
-        {
-           "total":2,
-           "listNotice":[
+        [
               {  
-                 "notice_seq":1,
+                 "seq":1,
                  "title":"We will check sysytem",
                  "writer_seq":1,
                  "date_created":"2019-07-15:05:00:00",
               },
               {  
-                 "notice_seq":2,
+                 "seq":2,
                  "title":"System Updated",
                  "writer_seq":1,
                  "date_created":"2019-08-15:05:00:00",
               }
-           ]
-        }
+        ]
 
 + Response 401 (application/json)
 
