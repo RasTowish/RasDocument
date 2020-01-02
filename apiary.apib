@@ -4088,17 +4088,17 @@ SIGNATURE_ALGORITHM: SHA1withRSA
             "message":"An internal server error has occurred.",
         }
         
-### Clip History [POST /clip/history]
+### Clip History [GET /clip/history]
 API to request to clip history
 
-| Attribute         | Description                          |
-|-------------------|--------------------------------------|
-| `type`            | [All/Buy/Reward/Withdraw/Use/BuyFailed]                |
-| `period`    | [1M / 3M/ 6M/ 1Y] |
-| `page`    | pagination |
+| Parameter       | Type | Description                                       |
+|-----------------|------|---------------------------------------------------|
+| `type`          | [All/Buy/Reward/Withdraw/Use/BuyFailed]                |
+| `period`        | [1M / 3M/ 6M/ 1Y] |
+| `pageNumber`    | pagination |
 
 * Status `200` - List clips history!
-* Status `400` - Bad Request.
+* Status `401` - The authentication is required.
 * Status `500` - An internal server error has occurred.
 
 + Response 200 (application/json)
@@ -4125,11 +4125,11 @@ API to request to clip history
         ]
 
 
-+ Response 400 (application/json)
++ Response 401 (application/json)
 
-        {   "code":"BAD_REQUEST",
-            "message":"Bad request."
-        }   
+        {
+            "message":"Invalid access token! Authentication is required!"
+        }  
 
 
 + Response 500 (application/json)
