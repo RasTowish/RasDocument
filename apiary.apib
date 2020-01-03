@@ -3967,13 +3967,13 @@ Get list of Notice
                  "seq":1,
                  "title":"We will check sysytem",
                  "writer_seq":1,
-                 "date_created":"2019-07-15:05:00:00"
+                 "date_created":"2019 10 10 08:10:30"
               },
               {  
                  "seq":2,
                  "title":"System Updated",
                  "writer_seq":1,
-                 "date_created":"2019-08-15:05:00:00"
+                 "date_created":"2019 10 10 08:10:30"
               }
         ]
 
@@ -4013,7 +4013,7 @@ This returns a notice content with specified notice sequence number.
                   It ended a high-stakes two-day crisis and practical siege of the largest and one of the most heavily fortified U.S. diplomatic missions in the world. The attack prompted the Pentagon to send hundreds of additional troops to the Middle East.
                   In an orchestrated assault, hundreds of militiamen and their supporters broke into the embassy compound, destroying a reception area, smashing windows and spraying graffiti on walls to protest U.S. airstrikes against an Iran-backed militia over the weekend that killed 25 fighters. The U.S. blamed the militia for a rocket attack on an Iraqi military base in the northern city of Kirkuk last week that killed a U.S. contractor.",
                  "writer_seq":1,
-                 "date_created":"2019-07-15:05:00:00"
+                 "date_created":"2019 10 10 08:10:30"
         }
 
 
@@ -4035,12 +4035,45 @@ This returns a notice content with specified notice sequence number.
 ## Group Payment
 Api request for payment 
 
-### Buy Clips [POST /clip/buy]
-API to request to buy clips.
+### Begin Buy Clips [POST /clip/begin_buy]
+
+* Status `200` - Clip have been given!
+* Status `401` - The authentication is required.
+* Status `500` - An internal server error has occurred.
+
+
++ Request (application/json)
+
+        {
+            "type" : "READY"
+        }
+        
++ Response 200 (application/json)
+    
+        {
+            buySeq : 12
+        }
+
++ Response 401 (application/json)
+
+        {   
+            "message":"Authorization Error!"
+        }             
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
+
+### Buy Clips [POST /clip/update_buy]
+API to request to update buy status
 SIGNATURE_ALGORITHM: SHA1withRSA
 
 | Attribute         | Description                          |
 |-------------------|--------------------------------------|
+| `buySeq`          | buySeq receive from Begin Buy API response                |
 | `orderId`         | orderId from Google                |
 | `productId`       | productId (1100 clips, 3300 clips) |
 | `purchaseTime`    | time purchase |
@@ -4050,12 +4083,15 @@ SIGNATURE_ALGORITHM: SHA1withRSA
 
 * Status `200` - Clip have been given!
 * Status `400` - Bad Request.
+* Status `401` - The authentication is required.
 * Status `500` - An internal server error has occurred.
 
 
 + Request (application/json)
 
         {
+            "buySeq" : 12,
+            "type" : "[FAILED/SUCCESS]",
             "data" : {
                 "orderId":"GPA.3338-5754-8429-79307",
                 "packageName":"net.mintpot.ras",
@@ -4079,7 +4115,13 @@ SIGNATURE_ALGORITHM: SHA1withRSA
 
         {   "code":"BAD_REQUEST",
             "message":"Bad request."
-        }             
+        }           
+        
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!"
+        }          
 
 + Response 500 (application/json)
 
@@ -4087,6 +4129,8 @@ SIGNATURE_ALGORITHM: SHA1withRSA
             "code":"SERVER_INTERNAL_ERROR",
             "message":"An internal server error has occurred.",
         }
+
+        
         
 ### Clip History [GET /clip/history]
 API to request to clip history
