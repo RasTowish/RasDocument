@@ -481,6 +481,7 @@ API request to get a todo item in detail inside task management
             },
             "requestUsers": [
                 {
+                    "request_seq" : 8,
                     "userSeq": 1,
                     "proposal_amount": 40000,
                     "detail_suggestions": "I will recording the whole map for you",
@@ -601,6 +602,7 @@ API request to get a wish item in detail inside task management
             },
             "requestUsers": [
                 {
+                    "request_seq" : 7,
                     "userSeq": 3,
                     "proposal_amount": 40000,
                     "detail_suggestions": "I will recording the whole map for you",
@@ -4149,26 +4151,31 @@ API to request to clip history
 
 + Response 200 (application/json)
     
-        [
-            {
-                "type":"BUY",
-                "dateCreated":"2019 12 10 10:10:30",
-                "amount": "100000",
-                "title": "Todowish 10000"
-            },
-            {
-                "type":"REWARD",
-                "dateCreated":"2019 12 10 10:10:30",
-                "amount": "4",
-                "title": "Invite Friends"
-            },
-            {
-                "type":"REWARD",
-                "dateCreated":"2019 12 10 10:10:30",
-                "amount": "4",
-                "title": "Daily Access"
-            }
-        ]
+        {
+            "code": "",
+            "message", "",
+            "totalClip": "23900",
+            "data": [
+                {
+                    "type":"BUY",
+                    "dateCreated":"2019 12 10 10:10:30",
+                    "amount": "100000",
+                    "title": "Todowish 10000"
+                },
+                {
+                    "type":"REWARD",
+                    "dateCreated":"2019 12 10 10:10:30",
+                    "amount": "4",
+                    "title": "Invite Friends"
+                },
+                {
+                    "type":"REWARD",
+                    "dateCreated":"2019 12 10 10:10:30",
+                    "amount": "4",
+                    "title": "Daily Access"
+                }
+            ]
+        }
 
 
 + Response 401 (application/json)
