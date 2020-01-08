@@ -3909,7 +3909,7 @@ Push notification of notice to all users (except for users who set Notice 'False
         }
 
         
-### Add A Notice [POST /notice]
+### Add A Notice [POST /notice/add]
 
 Create new notice information
 
@@ -3919,6 +3919,7 @@ Create new notice information
 | `content`         | Content of the notice from administrator  |
 
 * Status `200` - The request was processed successfully.
+* Status `400` - Bad request, title or content is empty or wrong format.
 * Status `401` - The authentication is required.
 * Status `500` - An error occurred inside the server.
 
@@ -3936,6 +3937,13 @@ Create new notice information
             "message":"New notice is created"
         }
 
++ Response 400 (application/json)
+
+        {
+            "code":"BAD_REQUEST",
+            "message":"Bad Request"
+        }
+
 + Response 401 (application/json)
 
         {
@@ -3950,7 +3958,7 @@ Create new notice information
             "message":"Error Message!"
         }
         
-### List of Notice [GET /notice?pageNumber={pageNumber}]
+### List of Notice [GET /notice/list?pageNumber={pageNumber}]
 
 Get list of Notice
 
