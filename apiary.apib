@@ -3367,7 +3367,7 @@ API request to get geolocation country name and country code
 API get registered Email by name and phone
 
 * Status `200` - Return registered email
-* Status `404` - Return not found error
+* Status `500` - Internal Server Error
 
 + Parameters
     + username - A query variable path
@@ -3376,13 +3376,13 @@ API get registered Email by name and phone
 
 + Response 200  (application/json)
 
-        "test123@gmail.com"
+        ["test123@gmail.com","testa@gmail.com"]
 
-+ Response 404 (application/json)
++ Response 500 (application/json)
 
         {
-            "code":"NOT_FOUND_ERROR",
-            "message":"The username or phone number does not exist!",
+            "code":"InternalServerError",
+            "message":"Internal Server Error",
         }
 
 ### GetAllGroup [GET /res/group]
