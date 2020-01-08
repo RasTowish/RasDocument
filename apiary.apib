@@ -4012,6 +4012,7 @@ This returns a notice content with specified notice sequence number.
 
 * Status `200` - The request was processed successfully.
 * Status `401` - The authentication is required.
+* Status `400` - Bad Request Error, maybe notice_seq doesn't exist
 * Status `500` - An error occurred inside the server.
 
 + Response 200 (application/json)
@@ -4033,6 +4034,14 @@ This returns a notice content with specified notice sequence number.
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+
++ Response 400 (application/json)
+
+        {
+            "code":"BAD_REQUEST",
+            "message":"Bad request."
+        }
+        
 
 + Response 500 (application/json)
 
