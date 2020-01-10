@@ -2733,7 +2733,6 @@ API request to change bank account
         
         {
             "bankName":"VN Technological and Commercial Joint Stock Bank",
-            "bankCode":"VTCBVNVX",
             "accountHolder":"Nguyen Van Son",
             "accountNumber":"19024734820023"
         }
@@ -3238,16 +3237,12 @@ API request rate user
 
 
 ## Group Generic
-API request for get media content such as image, video, icon and all generic data such ast list countries, regions, favorites 
-### Get Admin Info[GET /admin/info]
-API request to get admin info 
+### GetAdminInfomation [GET /admin/get]
+API request to get all country name and country code
 
-* Status `200` - Return the image url!
-* Status `401` - The authentication is required !
+* Status `200` - Return the list of country with country code.
 
-+ Request (application/json)
-     
-+ Response 200 (application/json)
++ Response 200  (application/json)
         
         [
            {
@@ -3272,13 +3267,6 @@ API request to get admin info
               "value2":"https://www.mintpot.net/blank-3"
            }
         ]
-        
-+ Response 401 (application/json)
-
-        {
-            "code":"AUTH_REQUIRED",
-            "message":"Invalid access token! Authentication is required!"
-        }
 
 + Response 500 (application/json)
 
