@@ -2717,7 +2717,7 @@ API request to update user info in account settings and my page, all field is op
             "message":"Invalid access token! Authentication is required!"
         }
 
-### ChangeBankAccount [PUT /setting/bankaccount]
+### ChangeBankAccount [POST /bankaccount/set]
 API request to change bank account 
 | Attribute       | Description                                       |
 |-----------------|---------------------------------------------------|
@@ -2803,7 +2803,7 @@ API get notifications setting of user
             "message":"Invalid access token! Authentication is required!"
         }
 
-### GetBankAccountSettings [GET /setting/get-bank]
+### GetBankAccountSettings [GET /bankaccount/get]
 API request to get curent back account setting
 
 * Status `200` - The current user acount.
