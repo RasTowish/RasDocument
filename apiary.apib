@@ -3239,12 +3239,8 @@ API request rate user
 
 ## Group Generic
 API request for get media content such as image, video, icon and all generic data such ast list countries, regions, favorites 
-### GetBanner [GET /home/advertising]
-API request to get image 
-| Attribute   | Description                                                        |
-|-------------|--------------------------------------------------------------------|
-| `category`  | The folder stored the image                                        |
-| `imageName` | The name of the image                                              |
+### Get Admin Info[GET /admin/info]
+API request to get admin info 
 
 * Status `200` - Return the image url!
 * Status `401` - The authentication is required !
@@ -3253,65 +3249,29 @@ API request to get image
      
 + Response 200 (application/json)
         
-        {
-            "banner":
-                [
-                       {
-                         "id":1,
-                          "name":"banner1",
-                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR-technology-tech-skills-1024x544.jpg",
-                          "advertisingUrl":"https://www.mintpot.net/blank-3"
-                       },
-                       {
-                        "id":2,
-                          "name":"banner2",
-                        "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/1_BVk1wj8dQ1T8ZCsLDRR31Q.jpeg",
-                          "advertisingUrl":"https://www.mintpot.net/"
-                       },
-                       {
-                         "id":3,
-                          "name":"banner1",
-                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/568a33a902b3c_thumb900.jpg",
-                          "advertisingUrl":"https://www.mintpot.net/blank-3"
-                       },
-                       {
-                        "id":4,
-                          "name":"banner2",
-                        "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR_banner.jpg",
-                          "advertisingUrl":"https://www.mintpot.net/"
-                       }
-                ],
-            "advertisingMain":
-                [
-                       {
-                            "id":1,
-                          "name":"banner1",
-                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/vrworld.jpg",
-                          "advertisingUrl":"https://www.mintpot.net/"
-                       },
-                       {
-                          "id":2,
-                          "name":"banner2",
-                          "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/ARVR_banner.jpg",
-                          "advertisingUrl":"https://www.mintpot.net/blank-1"
-                       }
-                ],
-            "advertisingSub":
-            [
-                   {
-                      "id":1,
-                      "name":"banner1",
-                      "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/en-newsbanner-postlaunch-oculus.jpg",
-                      "advertisingUrl":"https://www.mintpot.net/blank-19"
-                   },
-                   {
-                        "id":2,
-                      "name":"banner2",
-                      "imageUrl":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/Web_Banner_VR.jpg",
-                      "advertisingUrl":"https://www.mintpot.net/blank-12"
-                   }
-            ]
-        }
+        [
+           {
+              "seq":1,
+              "order":1,
+              "type":"BANNER-TOP",
+              "value1":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR-technology-tech-skills-1024x544.jpg",
+              "value2":"https://www.mintpot.net/blank-3"
+           },
+           {
+              "seq":1,
+              "order":1,
+              "type":"BANNER-TOP",
+              "value1":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR-technology-tech-skills-1024x544.jpg",
+              "value2":"https://www.mintpot.net/blank-3"
+           },
+           {
+              "seq":1,
+              "order":1,
+              "type":"BANNER-TOP",
+              "value1":"https://ras-banner.s3.ap-northeast-2.amazonaws.com/VR-technology-tech-skills-1024x544.jpg",
+              "value2":"https://www.mintpot.net/blank-3"
+           }
+        ]
         
 + Response 401 (application/json)
 
