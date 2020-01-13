@@ -2728,6 +2728,7 @@ API request to create or change bank account
 
 * Status `200` - Bank account is updated!
 * Status `401` - The authentication is required !
+* Status `500` - Internal Server Error (DB error or some exceptions)
 
 + Request (application/json)
         
@@ -2834,7 +2835,12 @@ API request to get curent back account setting
             "message":"Invalid access token! Authentication is required!"
         }
 
-     
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }     
 
 
 ## Group Post Operation
