@@ -2718,7 +2718,7 @@ API request to update user info in account settings and my page, all field is op
         }
 
 ### ChangeBankAccount [POST /bankaccount/set]
-API request to change bank account 
+API request to create or change bank account 
 | Attribute       | Description                                       |
 |-----------------|---------------------------------------------------|
 | `bankName`      | Name of the bank                                  |
@@ -2740,7 +2740,8 @@ API request to change bank account
 + Response 200 (application/json)
 
         {
-            "message":"Bank account updated!"
+            "code":"INSERTED/UPDATED",
+            "message":"Inserted/Updated!"
         }
         
 + Response 401 (application/json)
