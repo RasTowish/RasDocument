@@ -4161,7 +4161,7 @@ API to request to withdraw
 
 | Attribute         | Description                          |
 |-------------------|--------------------------------------|
-| `bank`          | bank name |
+| `bankName`          | bank name |
 | `accountHolder`          | account holder |
 | `accountNumber`          | account number |
 
@@ -4169,6 +4169,60 @@ API to request to withdraw
 * Status `200` - Withdraw record has been given!
 * Status `400` - Bad Request.
 * Status `500` - An internal server error has occurred.
+
++ Request (application/json)
+
+        {
+            "bankName" : "VCB",
+            "accountHolder" : "NGUYEN MINH TIEN",
+            "accountNumber" : "0021321321"
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "code":"OK",
+            "message":"Withdraw record has been given!"
+        }
+
++ Response 400 (application/json)
+
+        {   "code":"BAD_REQUEST",
+            "message":"Bad request."
+        }   
+
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
+
+
+### Clip Cancel Withdraw [POST /clip/cancel_withdraw]
+API to request to cancel withdraw
+
+
+| Attribute         | Description                          |
+|-------------------|--------------------------------------|
+| `bankName`          | bank name |
+| `accountHolder`          | account holder |
+| `accountNumber`          | account number |
+
+
+* Status `200` - Withdraw record has been given!
+* Status `400` - Bad Request.
+* Status `500` - An internal server error has occurred.
+
+
++ Request (application/json)
+
+        {
+            "bankName" : "VCB",
+            "accountHolder" : "NGUYEN MINH TIEN",
+            "accountNumber" : "0021321321"
+        }
 
 
 + Response 200 (application/json)
@@ -4191,6 +4245,7 @@ API to request to withdraw
             "code":"SERVER_INTERNAL_ERROR",
             "message":"An internal server error has occurred.",
         }
+
 
 
 ## Group ETC
