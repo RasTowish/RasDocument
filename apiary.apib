@@ -438,8 +438,8 @@ API request to get all current login user's todo item in todo management
             "message":"Invalid access token! Authentication is required!",
         }
         
-### GetMyAcceptedTodoList [GET /todo/accepted/get{?pageNumber}]
-API request to get all my ACCEPTED Todo
+### GetTodoMyRequest [GET /todo/request/get{?pageNumber}]
+API request to get all todos I request 
 
 * Status `200` - Return list data item in `page` index.
 * Status `401` - The authentication is required
@@ -491,6 +491,60 @@ API request to get all my ACCEPTED Todo
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!",
         }
+        
+### GetWishMyRequest [GET /wish/request/get{?pageNumber}]
+API request to get all wishes I request 
+
+* Status `200` - Return list data item in `page` index.
+* Status `401` - The authentication is required
+* Status `500 ` - Exception error
+
++ Parameters
+    + pageNumber - A variable that is required
+ 
++ Response 200 (application/json)
+        
+        [
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            },
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            },
+            {
+              "orderNo": "100",
+              "title": "Recording Son Doong cave",
+              "status": "PREPARING",
+              "estimatedBudget": 20000,
+              "createdDate": "2019-07-19 10:14:33",
+              "dueDate": "2019-07-19 10:14:33",
+            }
+          ]
+       
+
++ Response 500 (application/json)
+
+        {
+            "code":"DB_ERROR",
+            "message":"Cannot execute query!",
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!",
+        }        
         
 
 ### GetTodoItemDetail [GET /task/get/todoDetail{?orderNo}]
