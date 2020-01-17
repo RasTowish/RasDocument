@@ -4416,7 +4416,7 @@ API to request to reward a friend due
         }
 
         
-### Daily Access [GET /etc/daily-access]
+### Get Daily Reward [GET /etc/daily_reward]
 
 All users can receive clip rewards once a day.
 
@@ -4443,6 +4443,37 @@ All users can receive clip rewards once a day.
 + Response 500 (application/json)
 
         {
-            "code":"ALREADY_ACCESSED",
-            "message":"You have already received your daily access reward."
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"INTERNAL_SERVER_ERROR"
+        }
+
+        
+### Check Daily Reward [GET /etc/daily_reward/status]
+
+Check User Daily Reward Status
+
+* Status `200` - The request was processed successfully.
+* Status `401` - The authentication is required.
+* Status `500` - An error occurred inside the server.
+* Status `501` - The authentication is required.
+
++ Response 200 (application/json)
+    
+        {  
+            "RewardStatus":AVAILABLE/UNAVAILABLE
+        }
+
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"INTERNAL_SERVER_ERROR"
         }
