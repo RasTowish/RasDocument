@@ -172,12 +172,13 @@ API request for sign up by social network
             "message":"Cannot execute query!",
         }
 
-### SubmitSelectRegion [POST /reg/signup/update-region]
+### SubmitAdditionalInfo [POST /reg/signup/update-additional]
 API request for submit region, privacy and term of service agreement after uses social login
 | Attribute           | Description                                  |
 |---------------------|----------------------------------------------|
 | `country`           | The country of the user                  |
 | `region`            | The current region in the nation of the user |
+| `phoneNumber`       | The phone number of the user |
 | `servicesTermAgree` | Status of privacy agreement                  |
 | `privacyTermAgree`  | Status of term of services agreement         |
 | `receiveInfor`      | User want to receive addtional info?         |
@@ -190,6 +191,7 @@ API request for submit region, privacy and term of service agreement after uses 
         {
             "country":"KR",
             "region":"Sungnam",
+            "phoneNumber" : "0969696969",
             "servicesTermAgree":"true",
             "privacyTermAgree":"true",
             "receiveInfor":"false",
