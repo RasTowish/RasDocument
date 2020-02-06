@@ -2275,7 +2275,7 @@ API request to get list user from search bar
             "message":"Invalid access token! Authentication is required!"
         }
         
-### GetTodosMarket [GET /task/market/todos{?page,keyword,region,dateFrom,dateTo,type,sort,category,tags}]
+### GetTodosMarket [GET /task/market/todos{?page,keyword,country,region,dateFrom,dateTo,type,sort,category,tags}]
 API request to get list wish from search filter
 
 * Status `200` - Return the list of wish matched with keyword.
@@ -2285,6 +2285,7 @@ API request to get list wish from search filter
 + Parameters
     + page - A path variable that is required
     + keyword (optional) - A query variable
+    + country (optional) - Another query variable
     + region (optional) - Another query variable
     + dateFrom (optional) - Another query variable
     + dateTo (optional) - Another query variable
