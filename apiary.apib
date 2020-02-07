@@ -3584,6 +3584,34 @@ API request to get all country name and country code
             "message":"Cannot execute query!",
         }
 
+### Logout [POST /logout]
+API request to get all country name and country code
+
+* Status `200` - Logout success
+* Status `401` - The authentication is required !
+* Status `500` - Internal Server Error
+
++ Response 200 (application/json)
+
+        {
+            "code":"LOGOUT_SUCCESS",
+            "message":"Logout Success!"
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"error message"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!"
+        } 
+
+
 
         
 ## Group Upload Image
