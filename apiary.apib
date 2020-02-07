@@ -229,8 +229,8 @@ API request for normal login, using username and email
 | `password`          | The password registering with email above |
 
 * Status `200` - The login success, return all user data with token and a time to live
-* Status `400` - Wrong email or password
-* Status `404` - Email does not exist
+* Status `400` - Bad request errors
+* Status `500` - Error from Server
 
 + Request (application/json)
         
@@ -273,22 +273,26 @@ API request for normal login, using username and email
 + Response 400 (application/json)
         
         {  
-            "code":"WRONG_EMAIL_PASSWORD",
-            "message":"Wrong email or password!"
+            "code":"EMAIL_NOT_FOUND_ERROR",
+            "message":"Email Not Found!"
+        }
+        
+        {  
+            "code":"EMAIL_NOT_FOUND_ERROR",
+            "message":"Email Not Found!"
+        }
+        
+        {  
+            "code":"USER_STATUS_INVALID",
+            "message":"User Status is invalid!"
         }
 
-+ Response 404 (application/json)
-        
-        {
-            "code":"EMAIL_NOT_EXIST",
-            "message":"The email does not exist!"
-        }
         
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
         }
 
 ### ChangePassword [POST /auth/change-password]
