@@ -304,9 +304,9 @@ API request for changing password.
 | `confirmationPassword` | Re-type new password                 |
 
 * Status `200` - Password is changed
-* Status `400` - Current password is invalid
+* Status `400` - Bad request Errors
 * Status `401` - Authentication is required!
-* Status `403` - New password and confirm password does not match
+* Status `500` - DB Errors or some exceptions!
 
 + Request (application/json)
         
@@ -326,16 +326,14 @@ API request for changing password.
 + Response 400 (application/json)
         
         {
-            "code":"PASSWORD_INVALID",
+            "code":"PASSWORD_WRONG",
             "message":"Current password is invalid!",
         }
         
-+ Response 400 (application/json)
-        
         {
             "code":"PASSWORD_NOT_MATCH",
-            "message":"New password and confirm password does not match!",
-        }        
+            "message":"Current password is invalid!",
+        }
 
 + Response 401 (application/json)
 
