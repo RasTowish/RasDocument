@@ -1349,7 +1349,7 @@ API request to create current logged in user wish for themselves
             "message":"Cannot execute query!",
         }
         
-### CreateTodoRequest [POST /task/create/todoRequest]
+### Create Request For Todo [POST /task/create/todoRequest]
 API request to create current logged in user todo request inside each wish of another user.
 | Attribute         | Description                          |
 |-------------------|--------------------------------------|
@@ -1358,7 +1358,8 @@ API request to create current logged in user todo request inside each wish of an
 | `proposalAmount`        | Estimed budget of wish request       |
 
 * Status `200` - The todo request created !
-* Status `401` - The authentication is required !
+* Status `401` - The authentication is required
+* Status `500 ` - Exception error
     
 + Request (application/json)
 
@@ -1383,10 +1384,11 @@ API request to create current logged in user todo request inside each wish of an
             "message":"Invalid access token! Authentication is required!"
         }
         
-+ Response 404 (application/json)
++ Response 500 (application/json)
 
-        {   "code":"NOT_FOUND_ERROR",
-            "message":"Todo/Wish does not exist!"
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
         } 
         
 ### UpdateStatusRequest [POST /task/statusRequest]
