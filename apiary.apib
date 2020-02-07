@@ -626,8 +626,8 @@ API request to get a todo item in detail inside task management
 API request to get all current login user's wish item in wish management
 
 * Status `200` - Return list data item in `page` index.
-* Status `204` - These is no wish list available
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Parameters
     + pageNumber - A variable that is required 
@@ -663,13 +663,6 @@ API request to get all current login user's wish item in wish management
         ]
        
         
-+ Response 500 (application/json)
-
-        {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
-        }
-
 + Response 401 (application/json)
 
         {
@@ -677,11 +670,19 @@ API request to get all current login user's wish item in wish management
             "message":"Invalid access token! Authentication is required!",
         }
         
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Cannot execute query!",
+        }        
+        
 ### GetWishItemDetail [GET /task/get/wishDetail{?orderNo}]
 API request to get a wish item in detail inside task management
 
 * Status `200` - Return details of the `orderNo` item.
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Parameters
     + orderNo - A variable that is required
@@ -739,7 +740,7 @@ API request to get a wish item in detail inside task management
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Cannot execute query!",
         }
         
