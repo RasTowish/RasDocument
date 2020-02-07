@@ -357,7 +357,7 @@ API request to get recovery password when user forgot it
 
 
 * Status `200` - Temporary Password will be sent to the email
-* Status `404` - The email null or not exist
+* Status `401` - The email null or not exist
 * Status `500` - Exception error
 
 + Request (application/json)
@@ -370,14 +370,14 @@ API request to get recovery password when user forgot it
         
         {
             "code":"PASSWORD_WILL_SENT"
-            "message":"Temporary Password will be sent to the email!"
+            "message":"Password will be sent to the email registration!"
         }
         
-+ Response 404 (application/json)
++ Response 401 (application/json)
         
         {
-            "code":"NOT_FOUND_ERROR",
-            "message":"The email does not exist!"
+            "code":"EMAIL_NOT_FOUND_ERROR",
+            "message":"Email Not Found!"
         }
         
 + Response 500 (application/json)
