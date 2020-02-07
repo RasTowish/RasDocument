@@ -827,7 +827,7 @@ API request to get list of popular wish, maximum is 30 wishs
 
 * Status `200` - Return the list of the most popular wish.
 * Status `401` - The authentication is required
-
+* Status `500 ` - Exception error
 
 + Response 200 (application/json)
      
@@ -912,6 +912,13 @@ API request to get list of popular wish, maximum is 30 wishs
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
+        }         
 
 ### GetPopularTodos [GET /task/popular-todos]
 API request to get list of popular todos, return maximum 30 todos
