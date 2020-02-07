@@ -774,7 +774,7 @@ API request to get other users request detail inside each wish or todo task
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"InternalServerError",
             "message":"Cannot execute query!",
         }
 
@@ -789,6 +789,7 @@ API reuqest to post troubleshoot or cancel issue for an order item, can be wish 
 
 * Status `200` - The process is completed!.
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Request (application/json)
         
@@ -811,6 +812,13 @@ API reuqest to post troubleshoot or cancel issue for an order item, can be wish 
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"InternalServerError",
+            "message":"Cannot execute query!",
+        }        
 
 ## Group Home Information
 API request for wish and todo's general or utility 
