@@ -1022,6 +1022,7 @@ API request to get the list of todo will be started on this day, returm maximum 
 
 * Status `200` - Return the todo list which have `dateLive` match with today.
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Response 200 (application/json)
 
@@ -1148,6 +1149,13 @@ API request to get the list of todo will be started on this day, returm maximum 
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
+        }          
         
 ### GetRecommendTaskList [GET /task/recommended-list]
 API request to get recommended list which selected by administrator from user post, maximum is 30
