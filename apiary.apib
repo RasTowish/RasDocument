@@ -558,6 +558,7 @@ API request to get a todo item in detail inside task management
 
 * Status `200` - Return details of the `orderNo` item.
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Parameters
     + orderNo - A variable that is required
@@ -617,8 +618,8 @@ API request to get a todo item in detail inside task management
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
         }
         
 ### GetWishList [GET /task/get/wishs{?pageNumber,keyWord}]
