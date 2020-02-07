@@ -1162,6 +1162,7 @@ API request to get recommended list which selected by administrator from user po
 
 * Status `200` - Return the recommended list
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Response 200 (application/json)
 
@@ -1229,6 +1230,13 @@ API request to get recommended list which selected by administrator from user po
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
+        }          
         
 ## Group Task Creation
 API request to create new wish, todo and everything related
