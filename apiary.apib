@@ -393,8 +393,8 @@ API request for wish and todo management, include get list todo/wish and handle 
 API request to get all current login user's todo item in todo management
 
 * Status `200` - Return list data item in `page` index.
-* Status `204` - These is no todo list available
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Parameters
     + pageNumber - A variable that is required
@@ -433,8 +433,8 @@ API request to get all current login user's todo item in todo management
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
         }
         
 + Response 401 (application/json)
@@ -487,8 +487,8 @@ API request to get all todos I request
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
         }
         
 + Response 401 (application/json)
