@@ -925,6 +925,7 @@ API request to get list of popular todos, return maximum 30 todos
 
 * Status `200` - Return the list of the most popular todo.
 * Status `401` - The authentication is required
+* Status `500 ` - Exception error
 
 + Response 200 (application/json)
 
@@ -1008,6 +1009,13 @@ API request to get list of popular todos, return maximum 30 todos
         {
             "message":"Invalid access token! Authentication is required!",
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
+        }         
 
 ### GetTodayTodos [GET /task/today-todos]
 API request to get the list of todo will be started on this day, returm maximum 30 todos
