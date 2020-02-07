@@ -1240,7 +1240,7 @@ API request to get recommended list which selected by administrator from user po
         
 ## Group Task Creation
 API request to create new wish, todo and everything related
-### CreateWishRequest [POST /task/create/wishRequest]
+### Create Request For Wish [POST /task/create/wishRequest]
 API request to create current logged in user wish request inside each todo of another user.
 | Attribute         | Description                          |
 |-------------------|--------------------------------------|
@@ -1250,7 +1250,8 @@ API request to create current logged in user wish request inside each todo of an
 
 * Status `200` - The wish request is created
 * Status `401` - The authentication is required
-* Status `404` - Todo or wish does not exist or error!
+* Status `400` - Bad Request Errors
+* Status `500 ` - Exception error
 
 + Request (application/json)
         
@@ -1267,17 +1268,28 @@ API request to create current logged in user wish request inside each todo of an
             "message":"Wish request is completed!"
         }
 
++ Response 400 (application/json)
+
+        {   "code":"NOT_ENOUGH_CLIPS",
+            "message":"Not Enough clips!"
+        }
+        
+        {   "code":"TODO_OR_WISH_NOT_EXIST",
+            "message":"Todo/Wish does not exist!"
+        }
+        
 + Response 401 (application/json)
 
         {   "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
 
-+ Response 404 (application/json)
++ Response 500 (application/json)
 
-        {   "code":"NOT_FOUND_ERROR",
-            "message":"Todo/Wish does not exist!"
-        }  
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
+        }    
 
 
 ### CreateWish [POST /task/create/wish]
