@@ -1271,11 +1271,13 @@ API request to create current logged in user wish request inside each todo of an
 
 + Response 400 (application/json)
 
-        {   "code":"NOT_ENOUGH_CLIPS",
+        {   
+            "code":"NOT_ENOUGH_CLIPS",
             "message":"Not Enough clips!"
         }
         
-        {   "code":"TODO_OR_WISH_NOT_EXIST",
+        {   
+            "code":"TODO_OR_WISH_NOT_EXIST",
             "message":"Todo/Wish does not exist!"
         }
         
@@ -1335,6 +1337,13 @@ API request to create current logged in user wish for themselves
             "code":"WISH_CREATED",
             "message":"Wish is completed!"
         }
+        
++ Response 400 (application/json)
+
+        {   
+            "code":"TODO_OR_WISH_NOT_EXIST",
+            "message":"Todo/Wish does not exist!"
+        }        
         
 + Response 401 (application/json)
 
