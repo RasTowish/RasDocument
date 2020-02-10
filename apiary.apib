@@ -4041,7 +4041,7 @@ API request to notify backend start streaming, and backend notify to client usin
 + Response 500 (application/json)
         
         {
-            "code":"InternalServerError",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"error message"
         }
 
@@ -4052,6 +4052,7 @@ API rate a streaming
 
 * Status `200` - Success
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
 
 + Request (application/json)
         
@@ -4075,6 +4076,13 @@ API rate a streaming
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"error message"
+        }        
         
 ### Report Streaming [POST /streaming/report]
 Report a specific user causing a problem.
