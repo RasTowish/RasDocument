@@ -1308,7 +1308,7 @@ API request to create current logged in user wish for themselves
 
 * Status `200` - The wish request created !
 * Status `401` - The authentication is required !
-* Status `404` - Todo or wish does not exist or error!
+* Status `500 ` - Exception error
 
 + Request (application/json)
     
@@ -1400,7 +1400,9 @@ API to update status of task, ACCEPTED OR REJECTED a request
 | `type`            | Estimed budget of wish request       |
 
 * Status `200` - The todo request created !
+* Status `400` - Bad Request Errors
 * Status `401` - The authentication is required !
+* Status `500 ` - Exception error
     
 + Request (application/json)
 
@@ -1419,9 +1421,21 @@ API to update status of task, ACCEPTED OR REJECTED a request
         
 + Response 400 (application/json)
 
-        {   "code":"payment_error",
-            "message":"You not enought clip to create request, pls buy more Clip."
-        }             
+        {   "code":"TODO_NOT_PREPARING",
+            "message":"Todo Status must be PREPARING."
+        }   
+        
+        {   "code":"WISH_NOT_PREPARING",
+            "message":"Wish Status must be PREPARING."
+        } 
+        
+        {   "code":"WISHER_NOT_ENOUGH_CLIPS",
+            "message":"Failed - Wisher have not enough clips or cannot accept more!"
+        } 
+        
+        {   "code":"WISH_REQUESTER_NOT_ENOUGH_CLIPS",
+            "message":"Failed - Wish Requester have not enough clips or cannot accept more!"
+        } 
 
 + Response 401 (application/json)
 
@@ -1433,8 +1447,8 @@ API to update status of task, ACCEPTED OR REJECTED a request
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
-            "message":"Cannot execute query!",
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"DB Error or some exceptions on Server!",
         }
 
 
