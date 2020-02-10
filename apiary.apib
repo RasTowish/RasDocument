@@ -4203,10 +4203,9 @@ Push notification of notice to all users (except for users who set Notice 'False
 |-------------------|-------------------------------------------|
 | `notice_seq`           | Sequence of notice           |
 
-| Error code | HTTP code | Description |
-| --- | --- | --- |
-|`invalid_data`| 400 | notice_seq or is_read are invalid |
-|`no_exist`| 400 | notice_seq not exist |
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
 
 + Request (application/json)
 
