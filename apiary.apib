@@ -3727,6 +3727,7 @@ API request to change favorite category of the user
 API request to get all country name and country code
 
 * Status `200` - Return the list of favorite category with favorite id and image.
+* Status `500` - Internal Server Error
 
 + Response 200  (application/json)
         
@@ -3771,7 +3772,7 @@ API request to get all country name and country code
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Cannot execute query!",
         }
 
