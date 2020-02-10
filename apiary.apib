@@ -3458,7 +3458,7 @@ API report user
 + Response 500 (application/json)
         
         {
-            "code":"InternalServerError",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Error Message"
         }          
 
@@ -3557,6 +3557,7 @@ API request rate user
 API request to get all country name and country code
 
 * Status `200` - Return the list of country with country code.
+* Status `500` - DB Error or some exceptions!
 
 + Response 200  (application/json)
         
@@ -3587,7 +3588,7 @@ API request to get all country name and country code
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Cannot execute query!",
         }
 
