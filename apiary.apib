@@ -4090,6 +4090,7 @@ If the current TODO/WISH status is LIVE, change to PENDING
 
 * Status `200` - Success
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
 
 + Request (application/json)
         
@@ -4102,8 +4103,8 @@ If the current TODO/WISH status is LIVE, change to PENDING
 + Response 200
      
         {
-            "code":"update_success",
-            "message":"Update success!!!"
+            "code":"REPORT_SUCCESS",
+            "message":"Report success!"
         }
 
 + Response 401 (application/json)
@@ -4112,6 +4113,13 @@ If the current TODO/WISH status is LIVE, change to PENDING
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         } 
+
++ Response 500 (application/json)
+        
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"error message"
+        }         
         
 ### Send a chat message [POST /chat]
 This is not api description, using WebSocket, only data transper is correct
