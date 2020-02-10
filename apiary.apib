@@ -3596,6 +3596,7 @@ API request to get all country name and country code
 API request to get all country name and country code
 
 * Status `200` - Return the list of country with country code.
+* Status `500` - DB Error or some exceptions!
 
 + Response 200  (application/json)
         
@@ -3604,7 +3605,7 @@ API request to get all country name and country code
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Cannot execute query!",
         }
         
@@ -3612,6 +3613,7 @@ API request to get all country name and country code
 API request to get geolocation country name and country code
 
 * Status `200` - Return the list of country with country code.
+* Status `500` - DB Error or some exceptions!
 
 + Response 200  (application/json)
         
@@ -3624,7 +3626,7 @@ API request to get geolocation country name and country code
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Cannot execute query!",
         }
 
@@ -3654,6 +3656,7 @@ API get registered Email by name and phone
 API get all Group
 
 * Status `200` - Return the list of group .
+* Status `500` - Internal Server Error
 
 + Response 200  (application/json)
 
