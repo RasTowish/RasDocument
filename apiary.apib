@@ -3800,20 +3800,18 @@ API request to get all country name and country code
             "message":"Logout Success!"
         }
 
-+ Response 500 (application/json)
-        
-        {
-            "code":"InternalServerError",
-            "message":"error message"
-        }
-
 + Response 401 (application/json)
 
         {
             "message":"Invalid access token! Authentication is required!"
         } 
 
-
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"error message"
+        }
 
         
 ## Group Upload Image
@@ -3872,9 +3870,10 @@ API request for update fcm token and push notify
 ### UpdateFcmToken [POST /fcm/token]
 Send registration id(fcm token) to backend
 
-* Status `204` - Update token success
+* Status `200` - Update token success
 * Status `400` - Error
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
 
 + Request (application/json)
         
@@ -3882,7 +3881,12 @@ Send registration id(fcm token) to backend
             "fcmToken":"Azoskcmvj79kgmnelepekwcjipuy8tfjf"
         }
 
-+ Response 204
++ Response 200
+
+        {
+            "code":"FCM_TOKEN_UPDATED",
+            "message":"Fcm Token Updated!"
+        }
      
 + Response 400 (application/json)
         
@@ -3896,6 +3900,13 @@ Send registration id(fcm token) to backend
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"error message"
+        }        
 
         
 ### UpdateLastAccessDate [POST /task/access]
