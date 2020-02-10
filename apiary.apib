@@ -4011,8 +4011,9 @@ API request to get all notifications
 API request to notify backend start streaming, and backend notify to client using FCM notification to receive streaming
 
 * Status `200` - Success
-* Status `500` - Internal Server Error
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
+
 
 + Request (application/json)
         
@@ -4029,6 +4030,13 @@ API request to notify backend start streaming, and backend notify to client usin
             "code":"update_success",
             "message":"Update success!!!"
         }
+
++ Response 401 (application/json)
+
+        {
+            "code":"AUTH_REQUIRED",
+            "message":"Invalid access token! Authentication is required!"
+        }
      
 + Response 500 (application/json)
         
@@ -4037,12 +4045,7 @@ API request to notify backend start streaming, and backend notify to client usin
             "message":"error message"
         }
 
-+ Response 401 (application/json)
 
-        {
-            "code":"AUTH_REQUIRED",
-            "message":"Invalid access token! Authentication is required!"
-        }
         
 ### Rating Streaming [POST /streaming/rate]
 API rate a streaming
