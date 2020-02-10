@@ -3123,7 +3123,6 @@ API get notifications setting of user
 API request to get curent back account setting
 
 * Status `200` - The current user acount.
-* Status `400` - The bank account not set yet! 
 * Status `401` - The authentication is required !
 * Status `500` - Internal Server Error (DB error or some exceptions)
 
@@ -3137,12 +3136,6 @@ API request to get curent back account setting
             "withdrawStatus" : "WITHDRAWING/AVAILABLE"
         }
 
-+ Response 400 (application/json)
-        
-        {
-            "message":"The bank account not set yet!"
-        }
-
 + Response 401 (application/json)
 
         {
@@ -3153,7 +3146,7 @@ API request to get curent back account setting
 + Response 500 (application/json)
         
         {
-            "code":"InternalServerError",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Error Message"
         }     
 
