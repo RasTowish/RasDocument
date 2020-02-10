@@ -3960,8 +3960,9 @@ Data push and receive in data json :
 API request to get all notifications
 
 * Status `200` - Success
-* Status `500` - Internal Server Error
 * Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
+
 
 + Parameters
     + pageNumber - A query variable path
@@ -3988,19 +3989,21 @@ API request to get all notifications
               "content":"this is content"
            }
         ]
-
-+ Response 500 (application/json)
         
-        {
-            "code":"InternalServerError",
-            "message":"error message"
-        }
-
 + Response 401 (application/json)
 
         {
             "message":"Invalid access token! Authentication is required!"
-        }        
+        }                
+
++ Response 500 (application/json)
+        
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"error message"
+        }
+
+
 
 
 ## Group Streaming
