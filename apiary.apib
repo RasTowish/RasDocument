@@ -2937,7 +2937,18 @@ API to get posts of an user
               }
            ]
            
-                
++ Response 401 (application/json)
+
+        {
+            "message":"Authorization is required!"
+        }           
+           
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }                    
 
 ## Group Settings
 API request for get and update user, account and app settings.
