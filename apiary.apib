@@ -1567,6 +1567,7 @@ API request to get all information about the current logged in user
 
 * Status `200` - Return the user and account information
 * Status `401` - The authentication is required !
+* Status `500 ` - Exception error
 
 + Response 200 (application/json)
         
@@ -1596,6 +1597,13 @@ API request to get all information about the current logged in user
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Cannot execute query!",
+        }        
 
 
 ### GetAccountClipTransaction [GET /account/transaction-info/{?page,range,category}]
@@ -1917,6 +1925,7 @@ API request for find result match with keyword and option
 API request to get list todo from search bar
 * Status `200` - Return the list of `type` item, and will merge with GetWishBySearch in the future
 * Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions !
 
 + Parameters
     + page - A query variable
@@ -2076,10 +2085,18 @@ API request to get list todo from search bar
             "message":"Invalid access token! Authentication is required!"
         }
         
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }         
+        
 ### SearchWishs [GET /search/wishs{?page,keyword,category,sort}]
 API request to get list wish from search bar
 * Status `200` - Return the list of `type` item, and will merge with GetWishBySearch in the future
 * Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions !
 
 + Parameters
     + page - A query variable
@@ -2234,6 +2251,7 @@ API request to get list wish from search bar
               }
            ]
         }
+        
 + Response 401 (application/json)
 
         {
@@ -2241,10 +2259,18 @@ API request to get list wish from search bar
             "message":"Invalid access token! Authentication is required!"
         }
         
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }         
+        
 ### Search Posts by Title [GET /user/posts/get{?pageNumber,keyword}]
 API request to get list post from any user using search bar
 * Status `200` - Return the list of post item.
 * Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions !
 
 + Parameters
     + pageNumber - page number
@@ -2295,6 +2321,13 @@ API request to get list post from any user using search bar
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }          
 
 ### Search Users By Hashtag [GET /users/lasted/get{?pageNumber,keyword}]
 API request to get list user from search bar
