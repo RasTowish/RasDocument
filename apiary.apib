@@ -3685,6 +3685,7 @@ API request to change favorite category of the user
 | `groupName`        | Name of region group name                    |
 
 * Status `200` - Return the list of regions with region code.
+* Status `500` - Internal Server Error
 
 + Response 200  (application/json)
 
@@ -3718,7 +3719,7 @@ API request to change favorite category of the user
 + Response 500 (application/json)
 
         {
-            "code":"DB_ERROR",
+            "code":"INTERNAL_SERVER_ERROR",
             "message":"Cannot execute query!",
         }
 
