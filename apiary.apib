@@ -2590,8 +2590,8 @@ API request to get list wish from search filter
 API request to get list wish from search filter
 
 * Status `200` - Return the list of wish matched with keyword.
-* Status `204` - These is no wish list available in range or keyword
 * Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions 
 
 + Parameters
     + page - A path variable that is required
@@ -2760,12 +2760,20 @@ API request to get list wish from search filter
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        } 
         
 ### GetLatestRegisterUsers [GET /users/lasted/get/{?pageNumber}]
 API request to get list latest register user from search filter
 
 * Status `200` - Return the list of latest register user matched with keyword.
 * Status `401` - The authentication is required !
+* Status `500` - DB Error or some exceptions 
 
 + Parameters
     + pageNumber - A path variable that is required
@@ -2816,6 +2824,13 @@ API request to get list latest register user from search filter
         {
             "message":"Authorization is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }         
 
 ### GetAllFollowedUsers [GET /users/i_follow/get/{?pageNumber}]
 API request to get list latest register user from search filter
