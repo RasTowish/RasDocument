@@ -4391,6 +4391,7 @@ Api request for payment
 ### Begin Buy Clips [POST /clip/begin_buy]
 
 * Status `200` - Clip have been given!
+* Status `400` - Bad Request Error
 * Status `401` - The authentication is required.
 * Status `500` - An internal server error has occurred.
 
@@ -4407,6 +4408,14 @@ Api request for payment
         {
             "buySeq" : 12
         }
+
++ Response 400 (application/json)
+
+        {
+            "code":"BAD_REQUEST",
+            "message":"Bad request."
+        }
+        
 
 + Response 401 (application/json)
 
@@ -4462,8 +4471,8 @@ SIGNATURE_ALGORITHM: SHA1withRSA
 + Response 200 (application/json)
     
         {
-            "code":"OK",
-            "message":"Clip have been given!"
+            "code":"BUY_UPDATE_STATUS",
+            "message":"Update Buy Status Success!"
         }
 
 + Response 400 (application/json)
