@@ -3095,6 +3095,7 @@ API get notifications setting of user
 
 * Status `200` - The current user infomation!
 * Status `401` - The authentication is required !
+* Status `500` - Internal Server Error (DB error or some exceptions)
 
 + Response 200 (application/json)
 
@@ -3110,6 +3111,13 @@ API get notifications setting of user
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }         
 
 ### GetBankAccountSettings [GET /bankaccount/get]
 API request to get curent back account setting
