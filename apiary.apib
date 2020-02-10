@@ -2957,6 +2957,7 @@ API request to update user info in account settings and my page, all field is op
 * Status `200` - User info is updated!
 * Status `400` - Wrong phone number format.
 * Status `401` - The authentication is required !
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
 
 + Request (application/json)
         
@@ -2999,6 +3000,13 @@ API request to update user info in account settings and my page, all field is op
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }         
 
 ### ChangeBankAccount [POST /bankaccount/set]
 API request to create or change bank account 
