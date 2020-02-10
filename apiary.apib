@@ -4506,6 +4506,7 @@ API to request to clip history
 | `pageNumber`    | pagination |
 
 * Status `200` - List clips history!
+* Status `400` - Bad Request Errors
 * Status `401` - The authentication is required.
 * Status `500` - An internal server error has occurred.
 
@@ -4535,6 +4536,12 @@ API to request to clip history
             ]
         }
 
+
++ Response 400 (application/json)
+
+        {   "code":"BAD_REQUEST",
+            "message":"Bad request."
+        } 
 
 + Response 401 (application/json)
 
@@ -4587,6 +4594,11 @@ API to request to withdraw
             "message":"Bad request."
         }   
 
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!"
+        }  
 
 + Response 500 (application/json)
 
