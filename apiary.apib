@@ -2334,6 +2334,8 @@ API request to get list user from search bar
 
 * Status `200` - Return the list of user.
 * Status `401` - The authentication is required !
+* Status `400` - Bad request errors !
+* Status `500` - DB Error or some exceptions 
 
 + Parameters
     + pageNumber - page number
@@ -2380,12 +2382,26 @@ API request to get list user from search bar
           }
         ]
 
++ Response 400 (application/json)
+
+        {
+            "code":"BAD_REQUEST_ERROR",
+            "message":"Bad Request!"
+        }
+
 + Response 401 (application/json)
 
         {
             "code":"AUTH_REQUIRED",
             "message":"Invalid access token! Authentication is required!"
         }
+        
++ Response 500 (application/json)
+
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"Error Message!"
+        }         
         
 ### GetTodosMarket [GET /task/market/todos{?page,keyword,country,region,dateFrom,dateTo,type,sort,category,tags}]
 API request to get list wish from search filter
