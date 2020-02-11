@@ -4496,8 +4496,13 @@ SIGNATURE_ALGORITHM: SHA1withRSA
 + Response 200 (application/json)
     
         {
-            "code":"BUY_UPDATE_STATUS",
-            "message":"Update Buy Status Success!"
+            "code":"BUY_UPDATE_STATUS_SUCCESS",
+            "message":"Update Buy Status: Success!"
+        }
+        
+        {
+            "code":"BUY_UPDATE_STATUS_FAILED",
+            "message":"Update Buy Status: Failed!"
         }
 
 + Response 400 (application/json)
