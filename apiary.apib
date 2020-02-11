@@ -1267,10 +1267,10 @@ API request to create current logged in user wish request inside each todo of an
 + Response 400 (application/json)
 
         {   
-            "code":"NOT_ENOUGH_CLIPS",
-            "message":"Not Enough clips!"
+            "code":"DUPLICATE",
+            "message":"Duplicate!"
         }
-        
+
         {   
             "code":"TODO_OR_WISH_NOT_EXIST",
             "message":"Todo/Wish does not exist!"
@@ -1333,13 +1333,6 @@ API request to create current logged in user wish for themselves
             "message":"Wish is completed!"
         }
         
-+ Response 400 (application/json)
-
-        {   
-            "code":"TODO_OR_WISH_NOT_EXIST",
-            "message":"Todo/Wish does not exist!"
-        }        
-        
 + Response 401 (application/json)
 
         {
@@ -1380,7 +1373,23 @@ API request to create current logged in user todo request inside each wish of an
             "code":"WISH_REQUEST_CREATED",
             "message":"Wish request created!"
         }
+
++ Response 400 (application/json)
+
+        {   
+            "code":"DUPLICATE",
+            "message":"Duplicate!"
+        }
+
+        {   
+            "code":"NOT_ENOUGH_CLIPS",
+            "message":"Not Enough clips!"
+        }
         
+        {   
+            "code":"TODO_OR_WISH_NOT_EXIST",
+            "message":"Todo/Wish does not exist!"
+        }        
 
 + Response 401 (application/json)
 
@@ -4037,7 +4046,7 @@ API request to notify backend start streaming, and backend notify to client usin
             "orderId":123,
             "type":"TODO/WISH",
             "streamingType":"VR/NORMAL",
-            "status":"START/STOP/VIEWER_START/VIEWER_STOP"
+            "status":"START/STOP/VIEWER_START/VIEWER_STOP/STREAMER_ACCIDENT"
         }
 
 + Response 200
