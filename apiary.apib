@@ -3649,6 +3649,7 @@ API get registered Email by name and phone
 
 * Status `200` - Return registered email
 * Status `500` - Internal Server Error
+* Status `400` - Bad request error !
 
 + Parameters
     + username - A query variable path
@@ -3659,12 +3660,26 @@ API get registered Email by name and phone
 
         ["test123@gmail.com","testa@gmail.com"]
 
++ Response 400 (application/json)
+
+        {
+            "code":"USER_PHONE_NOT_EXIST",
+            "message":"Username or phone number is not exist!",
+        }
+
++ Response 400 (application/json)
+
+        {
+            "code":"CANNOT_GET_EMAIL_SOCIAL",
+            "message":"Not support Get Email by username and phone number with social network",
+        }
+
 + Response 500 (application/json)
 
         {
             "code":"INTERNAL_SERVER_ERROR",
-            "message":"Internal Server Error",
-        }
+            "message":"Cannot execute query!",
+        }        
 
 ### GetAllGroup [GET /res/group]
 API get all Group
