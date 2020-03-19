@@ -4851,14 +4851,15 @@ Check User Daily Reward Status
 ## Group Chat
 APIs to handle chat messages
 
-### Send Chat Message [POST fcm/chat]
+### Send Chat Message [POST /fcm/chat]
 
 API to send chat message.
 
 * Status `200` - send message success!
 * Status `400` - bad request error, user not exist!
+* Status `401` - Authorization error!
 * Status `500` - An internal server error has occurred.
-    
+
 + Request (application/json)
 
         {
@@ -4878,7 +4879,7 @@ API to send chat message.
                 "userName": "test2"
             }
         }
-
+        
 + Response 200 (application/json)
     
         {
