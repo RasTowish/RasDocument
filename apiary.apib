@@ -4847,3 +4847,54 @@ Check User Daily Reward Status
             "code":"INTERNAL_SERVER_ERROR",
             "message":"INTERNAL_SERVER_ERROR"
         }
+        
+## Group Chat
+APIs to handle chat messages
+
+### Send Chat Message [POST fcm/chat]
+
+API to send chat message.
+
+* Status `200` - send message success!
+* Status `400` - bad request error, user not exist!
+* Status `500` - An internal server error has occurred.
+    
++ Request (application/json)
+
+        {
+            "message": "This is message",
+            "localSentTime": "2019010 10 10:10:10",
+            "remoteReceivedTime": "2019010 10 10:10:10",
+            "userFrom": 
+            {
+                "userSeq": 46,
+                "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/thumb/46/1583994025168417156a293637e3d2772-2020-03-12-20-26.jpg",
+                "userName": "test1"
+            },
+            "userTo": 
+            {
+                "userSeq": 53,
+                "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573800538921co-cam-1-2019-11-15-48-59.jpg",
+                "userName": "test2"
+            }
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "code":"SUCCESS",
+            "message":"Chat message will be sent."
+        }
+
++ Response 400 (application/json)
+
+        {   "code":"NOT_EXIST",
+            "message":"Not Exist!"
+        }             
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
