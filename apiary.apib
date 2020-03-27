@@ -4147,6 +4147,40 @@ API request to get all notifications
             "code":"INTERNAL_SERVER_ERROR",
             "message":"error message"
         }        
+        
+
+### Read Notification [POST /user/notifications/read]
+API request to get all notifications
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
+
++ Request (application/json)
+        
+        {
+            "notiSeq":123
+        }
+
++ Response 200 (application/json)
+
+        {
+            "code":"SUCCESS",
+            "message":"SUCCESS"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!"
+        }                
+
++ Response 500 (application/json)
+        
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"error message"
+        }          
 
 
 ## Group Streaming
