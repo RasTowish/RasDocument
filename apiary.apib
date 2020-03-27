@@ -4094,6 +4094,31 @@ API request to get all notifications
         }
 
 
+### Get Notification Count [GET /user/notifications/unread/count]
+API request to get all notifications
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error
+
++ Response 200 (application/json)
+
+        {
+            "unread": 0
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "message":"Invalid access token! Authentication is required!"
+        }                
+
++ Response 500 (application/json)
+        
+        {
+            "code":"INTERNAL_SERVER_ERROR",
+            "message":"error message"
+        }
 
 
 ## Group Streaming
