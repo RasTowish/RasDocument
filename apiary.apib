@@ -4943,7 +4943,7 @@ Check User Daily Reward Status
 ## Group Chat
 APIs to handle chat messages
 
-### Send Chat Message [POST /fcm/chat]
+### Send Chat Message [POST /chat/send]
 
 API to send chat message.
 
@@ -4958,6 +4958,7 @@ API to send chat message.
             "message": "This is message",
             "localSentTime": "2019010 10 10:10:10",
             "remoteReceivedTime": "2019010 10 10:10:10",
+            "uuid":"4kjfka;fgajgoiujobgvkg"
             "userFrom": 
             {
                 "userSeq": 46,
@@ -4970,6 +4971,41 @@ API to send chat message.
                 "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573800538921co-cam-1-2019-11-15-48-59.jpg",
                 "userName": "test2"
             }
+        }
+        
++ Response 200 (application/json)
+    
+        {
+            "code":"SUCCESS",
+            "message":"Chat message will be sent."
+        }
+
++ Response 400 (application/json)
+
+        {   "code":"NOT_EXIST",
+            "message":"Not Exist!"
+        }             
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
+        
+### Read Chat Message [POST /chat/read]
+
+API to send chat message.
+
+* Status `200` - send message success!
+* Status `400` - bad request error, user not exist!
+* Status `401` - Authorization error!
+* Status `500` - An internal server error has occurred.
+
++ Request (application/json)
+
+        {
+            "uuid":"4kjfka;fgajgoiujobgvkg"
         }
         
 + Response 200 (application/json)
