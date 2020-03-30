@@ -5027,3 +5027,43 @@ API to send chat message.
             "code":"SERVER_INTERNAL_ERROR",
             "message":"An internal server error has occurred.",
         }
+        
+        
+        
+### Get Chat Messages [POST /chat/get]
+
+API to send chat message.
+
+* Status `200` - send message success!
+* Status `400` - bad request error, user not exist!
+* Status `401` - Authorization error!
+* Status `500` - An internal server error has occurred.
+
+        
++ Response 200 (application/json)
+    
+        [
+            {
+                "uuid" : 1,
+                "senderSeq" : 11,
+                "message" : "kkk"
+            },
+            {
+                 "uuid" : 2,
+                "senderSeq" : 11,
+                "message" : "kkk"
+            },
+            {
+                 "uuid" : 3,
+                "senderSeq" : 11,
+                "message" : "kkk"
+            }
+        ]
+
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
