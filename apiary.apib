@@ -5030,7 +5030,7 @@ API to read my chat message.
         
         
         
-### Get Chat Messages [POST /chat/get]
+### Get Chat Messages From Me [POST /chat/from_me]
 
 API to get chat messages sending from me.
 
@@ -5038,6 +5038,83 @@ API to get chat messages sending from me.
 * Status `400` - bad request error, user not exist!
 * Status `401` - Authorization error!
 * Status `500` - An internal server error has occurred.
+
+
+        
++ Response 200 (application/json)
+    
+        [
+            {
+                "message": "This is message",
+                "remoteReceivedTime": "2019010 10 10:10:10",
+                "uuid":"4kjfka;fgajgoiujobgvkg",
+                "userFrom": 
+                {
+                    "userSeq": 46,
+                    "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/thumb/46/1583994025168417156a293637e3d2772-2020-03-12-20-26.jpg",
+                    "userName": "test1"
+                },
+                "userTo": 
+                {
+                    "userSeq": 53,
+                    "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573800538921co-cam-1-2019-11-15-48-59.jpg",
+                    "userName": "test2"
+                }
+            },
+            {
+                "message": "This is message",
+                "remoteReceivedTime": "2019010 10 10:10:10",
+                "uuid":"112222",
+                "userFrom": 
+                {
+                    "userSeq": 49,
+                    "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/thumb/46/1583994025168417156a293637e3d2772-2020-03-12-20-26.jpg",
+                    "userName": "test1"
+                },
+                "userTo": 
+                {
+                    "userSeq": 53,
+                    "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573800538921co-cam-1-2019-11-15-48-59.jpg",
+                    "userName": "test2"
+                }
+            },
+            {
+                "message": "This is message",
+                "remoteReceivedTime": "2019010 10 10:10:10",
+                "uuid":"33333333",
+                "userFrom": 
+                {
+                    "userSeq": 42,
+                    "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/thumb/46/1583994025168417156a293637e3d2772-2020-03-12-20-26.jpg",
+                    "userName": "test1"
+                },
+                "userTo": 
+                {
+                    "userSeq": 53,
+                    "profileImage": "https://backend-resource.s3.ap-northeast-2.amazonaws.com/53/1573800538921co-cam-1-2019-11-15-48-59.jpg",
+                    "userName": "test2"
+                }
+            }
+        ]
+
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
+        
+        
+### Get Chat Messages To Me [POST /chat/to_me]
+
+API to get chat messages sending from me.
+
+* Status `200` - send message success!
+* Status `400` - bad request error, user not exist!
+* Status `401` - Authorization error!
+* Status `500` - An internal server error has occurred.
+
 
 + Request (application/json)
 
