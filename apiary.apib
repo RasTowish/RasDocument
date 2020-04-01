@@ -5146,3 +5146,31 @@ API to get chat messages sending from me.
             "code":"SERVER_INTERNAL_ERROR",
             "message":"An internal server error has occurred.",
         }
+        
+        
+### Read All Chat Messages From Me [POST /chat/read_all]
+
+API to get chat messages sending from me.
+
+* Status `200` - send message success!
+* Status `400` - bad request error, user not exist!
+* Status `401` - Authorization error!
+* Status `500` - An internal server error has occurred.
+
+        
++ Response 200 (application/json)
+    
++ Response 200 (application/json)
+    
+        {
+            "code":"SUCCESS",
+            "message":"SUCCESS"
+        }
+
+
++ Response 500 (application/json)
+
+        {
+            "code":"SERVER_INTERNAL_ERROR",
+            "message":"An internal server error has occurred.",
+        }
