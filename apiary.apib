@@ -3271,6 +3271,39 @@ API post a comment
             "message":"Error Message"
         }
         
+### Delete Comment [POST /comment/post/delete]
+API post a comment
+
+* Status `200` - Success
+* Status `401` - Authentication is required!
+* Status `500` - Internal Server Error (DB Error or some exceptions!)
+
++ Request (application/json)
+        
+        {
+            "commentSeq":123
+        }
+
++ Response 200 (application/json)
+     
+        {
+            "code":"COMMENT_DELETED",
+            "message":"Comment is created!"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "Message": "Authorization has been denied for this request."
+        }
+
++ Response 500 (application/json)
+        
+        {
+            "code":"InternalServerError",
+            "message":"Error Message"
+        }        
+        
 ### Get Comments of Post [GET /comment/post/get_all/{?postSeq,pageNumber}]
 API to get all comments of a post
 
